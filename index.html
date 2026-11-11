@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>登大人島｜展演骨架 v0.4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&display=swap">
+<style>
+:root{
+  --paper:#f5f0e6; --paper2:#ebe4d5; --card:#fbf8f2;
+  --ink:#33312d; --ink2:#6f6a60; --line:#bdb5a6;
+  --lamp:#e09a2e; --lampsoft:#f7e2b8; --sea:#dbe6e4; --sea2:#b9cfcd;
+  --red:#b4442f; --ok:#5f7d5a;
+  --r:16px 20px 14px 18px / 18px 14px 20px 16px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--paper);color:var(--ink);font-family:"LXGW WenKai TC","PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;font-size:18px;line-height:1.6;
+  background-image:radial-gradient(rgba(0,0,0,.025) 1px,transparent 1px);background-size:5px 5px}
+button{font:inherit;color:inherit}
+h1,h2,h3{font-weight:700;margin:.2em 0 .5em;line-height:1.35}
+h2{font-size:1.45rem}
+p{margin:.35em 0}
+.hide{display:none!important}
+.tiny{font-size:.82rem;color:var(--ink2)}
+.lead{color:var(--ink2)}
+.big{font-size:1.3rem}
+.right{text-align:right}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:14px}
+
+/* header */
+header{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:18px;padding:10px 22px;background:rgba(245,240,230,.94);border-bottom:1.5px solid var(--line);backdrop-filter:blur(4px)}
+.brand{font-weight:700;font-size:1.25rem;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.brand i{width:12px;height:12px;border-radius:50%;background:var(--lamp);box-shadow:0 0 0 5px rgba(224,154,46,.22)}
+.tabs{display:flex;gap:6px}
+.tab{border:1.5px solid transparent;background:none;padding:5px 14px;border-radius:var(--r);cursor:pointer;color:var(--ink2)}
+.tab.on{border-color:var(--ink);color:var(--ink);background:var(--card)}
+.hsp{flex:1}
+.hbtn{border:1.5px solid var(--line);background:var(--card);padding:5px 12px;border-radius:var(--r);cursor:pointer;font-size:.92rem;white-space:nowrap}
+.hbtn.need{border-color:var(--lamp);background:var(--lampsoft)}
+.hbtn.need::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--lamp);margin-right:6px;vertical-align:middle}
+
+main{max-width:1320px;margin:0 auto;padding:22px 26px 90px}
+
+/* buttons */
+.btn{border:1.6px solid var(--ink);background:var(--card);padding:9px 20px;border-radius:var(--r);cursor:pointer;transition:transform .12s,background .2s;text-align:left}
+.btn:hover{transform:translateY(-1px);background:#fff}
+.btn.primary{background:var(--lampsoft);border-color:var(--ink)}
+.btn.ghost{border-color:var(--line);color:var(--ink2);background:transparent}
+.btn.sm{padding:5px 13px;font-size:.9rem}
+.btn.huge{font-size:1.35rem;padding:18px 34px}
+.btn.chip{border-color:var(--line);padding:8px 18px}
+.btn.chip.sel{border-color:var(--ink);background:var(--lampsoft)}
+.linkb{border:none;background:none;color:var(--ink2);text-decoration:underline;cursor:pointer;padding:0;font-size:.9rem}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.chips.col{flex-direction:column;align-items:flex-start}
+input[type=text],textarea{font:inherit;width:100%;max-width:560px;border:1.5px solid var(--line);border-radius:12px;background:#fff;padding:9px 12px}
+textarea{resize:vertical}
+.own{display:flex;gap:10px;align-items:center;margin-top:8px;max-width:620px}
+.chk{display:flex;gap:8px;align-items:center;font-size:.92rem;color:var(--ink2);margin-top:8px}
+
+/* scene: achao dialog */
+.scene{display:grid;grid-template-columns:minmax(220px,36%) 1fr;gap:34px;align-items:center;min-height:calc(100vh - 190px)}
+.scene .art{display:flex;justify-content:center;align-items:flex-end}
+.scene .art svg{width:100%;max-width:300px;height:auto}
+.bubble{position:relative;background:var(--card);border:1.6px solid var(--ink);border-radius:var(--r);padding:20px 26px;max-width:640px}
+.bubble::before{content:"";position:absolute;left:-14px;top:38px;width:22px;height:22px;background:var(--card);border-left:1.6px solid var(--ink);border-bottom:1.6px solid var(--ink);transform:rotate(45deg)}
+.bubble .who{font-size:.85rem;color:var(--ink2)}
+.bubble p{font-size:1.3rem;opacity:0;animation:fade .5s forwards}
+.bubble p:nth-of-type(2){animation-delay:.7s}
+.bubble p:nth-of-type(3){animation-delay:1.4s}
+.opts{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-top:20px;opacity:0;animation:fade .5s 1.1s forwards}
+.opts .btn{min-width:280px}
+@keyframes fade{to{opacity:1}}
+
+/* facility page */
+.fpage{max-width:980px;margin:0 auto}
+.fhead{display:flex;align-items:center;gap:18px;margin-bottom:14px}
+.fhead svg{width:84px;height:84px;flex:none}
+.fhead h1{margin:0;font-size:2rem}
+.fhead .sub{color:var(--ink2)}
+.box{background:var(--card);border:1.5px solid var(--line);border-radius:var(--r);padding:18px 22px;margin:12px 0}
+.box.red{border-color:var(--red);border-width:2px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.ucard{background:var(--card);border:1.6px solid var(--ink);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+.ucard.site{border-style:dashed;border-color:var(--line);color:var(--ink2)}
+.ucard h3{margin:0}
+.skill3{display:flex;gap:6px;margin:4px 0}
+.skill3 span{font-size:.75rem;padding:1px 8px;border:1.3px dashed var(--line);border-radius:10px;color:var(--ink2)}
+.skill3 span.on{border-style:solid;border-color:var(--lamp);background:var(--lampsoft);color:var(--ink)}
+.tag{display:inline-block;font-size:.75rem;padding:1px 9px;border-radius:10px;border:1.3px solid var(--line);color:var(--ink2);white-space:nowrap}
+.tag.run{border-color:var(--ok);color:var(--ok)}
+.tag.sim{border-color:var(--lamp);color:#9a6512}
+.tag.plan{border-style:dashed}
+table.t{border-collapse:collapse;width:100%;font-size:.95rem}
+table.t td,table.t th{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+
+/* practice frame */
+.pr{max-width:920px;margin:0 auto;min-height:calc(100vh - 170px);display:flex;flex-direction:column}
+.prtop{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding-bottom:12px;border-bottom:1.5px dashed var(--line)}
+.prtitle{font-weight:700}
+.segs{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.seg{font-size:.78rem;padding:2px 10px;border-radius:10px;border:1.3px solid var(--line);color:var(--ink2)}
+.seg.done{background:var(--paper2)}
+.seg.on{border-color:var(--ink);color:var(--ink);background:var(--lampsoft)}
+.prbody{flex:1;padding:34px 8px 20px;animation:fade .35s}
+.prfoot{display:flex;justify-content:space-between;align-items:center;border-top:1.5px dashed var(--line);padding-top:10px}
+.src{font-size:.78rem;color:var(--ink2)}
+.thought{font-size:1.6rem;padding:14px 22px;border-left:4px solid var(--lamp);background:var(--card);display:inline-block;min-height:2.2em}
+.story{max-width:720px}
+.story .who{font-size:.85rem;color:var(--ink2);margin-bottom:6px}
+.story .line{font-size:1.2rem;animation:fade .5s}
+.story .line.res{color:var(--ink2);font-style:italic}
+.story .q{font-weight:700;margin-top:14px}
+.story .picked{color:var(--ink2)}
+
+/* breathing */
+.breath{height:260px;display:flex;align-items:center;justify-content:center}
+.bc{width:150px;height:150px;border-radius:50%;border:2px solid var(--ink);background:radial-gradient(circle,var(--lampsoft) 0%,rgba(247,226,184,.25) 70%);transform:scale(.8)}
+.count{font-size:4rem;text-align:center;margin:30px 0}
+.dots{display:flex;gap:22px;margin:22px 0}
+.dot{width:74px;height:74px;border-radius:50%;border:2px dashed var(--ink2);background:transparent;cursor:pointer}
+.dot.on{border-style:solid;border-color:var(--ink);background:var(--lampsoft)}
+.scale5{display:flex;gap:8px;margin:16px 0;align-items:stretch}
+.scale5 .btn{flex:1;text-align:center;padding:14px 6px;font-size:.9rem}
+.rangewrap{max-width:560px}
+.rangewrap input{width:100%;accent-color:var(--lamp)}
+.rangeval{font-size:2.6rem;text-align:center}
+.rangelab{display:flex;justify-content:space-between;font-size:.82rem;color:var(--ink2)}
+.ring{width:170px;height:170px;margin:20px auto;display:block}
+.ring circle.p{stroke-dasharray:440;stroke-dashoffset:440;animation:ring 8s linear forwards}
+@keyframes ring{to{stroke-dashoffset:0}}
+
+/* hook */
+.hookwrap{position:relative;height:260px;max-width:560px}
+.hookwrap svg{position:absolute;left:30px;top:0;width:90px;height:220px}
+.hookwrap .ht{position:absolute;left:110px;top:150px;font-size:1.35rem;background:var(--card);border:1.5px solid var(--ink);border-radius:var(--r);padding:8px 16px;transition:transform 2.4s ease-in,opacity 2.4s}
+.hookwrap.free .ht{transform:translate(160px,-140px) rotate(-8deg);opacity:.15}
+
+/* bottle */
+.bottlefly{width:120px;height:120px;margin:10px 0}
+.bottlefly.go{animation:float 3s ease-in forwards}
+@keyframes float{to{transform:translate(380px,-40px) rotate(30deg);opacity:0}}
+.note{background:var(--card);border:1.5px solid var(--ink);border-radius:var(--r);padding:20px 24px;font-size:1.3rem;max-width:620px;animation:fade .6s}
+.note .sig{font-size:.9rem;color:var(--ink2);margin-top:8px}
+
+/* cards */
+.cards{display:flex;flex-wrap:wrap;gap:14px}
+.gcard{width:300px;perspective:900px;cursor:pointer}
+.gcard .in{display:grid;width:100%;transition:transform .6s;transform-style:preserve-3d}
+.gcard.flip .in{transform:rotateY(180deg)}
+.gcard .f,.gcard .b{grid-area:1/1;position:relative;min-height:160px;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1.6px solid var(--ink);border-radius:var(--r);background:var(--card);padding:14px 16px 10px;font-size:.95rem;line-height:1.55}
+.gcard .b{transform:rotateY(180deg);background:#fffdf7}
+.gcard h4{margin:0 0 6px;font-size:1.05rem}
+.gcard .it{margin-top:8px;font-size:.85rem;color:var(--ink2);border-top:1px dashed var(--line);padding-top:6px}
+.gcard.warm .f{border-color:var(--lamp);box-shadow:0 0 0 3px var(--lampsoft)}
+
+/* map */
+.mapwrap{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start}
+.map svg{width:100%;height:auto;display:block}
+.fac{cursor:pointer}
+.fac .glow{fill:var(--lamp);opacity:0}
+.fac.lit .glow{opacity:.28}
+.fac.focus .glow{opacity:.5;animation:pulse 1.6s infinite}
+.fac.site .ic{stroke-dasharray:4 4;opacity:.6}
+.fac:hover .lab{text-decoration:underline}
+@keyframes pulse{50%{opacity:.18}}
+.side{position:sticky;top:80px}
+.mcard{background:var(--card);border:1.6px solid var(--ink);border-radius:var(--r);padding:16px 18px;animation:fade .3s}
+.tipbox{display:flex;gap:10px;align-items:flex-start;margin-top:14px}
+.tipbox svg{width:70px;flex:none}
+.tipbox .bubble{padding:10px 14px;font-size:1rem}
+.tipbox .bubble::before{display:none}
+.tipbox .bubble p{font-size:1rem}
+
+/* overview */
+.ovhead{display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:8px}
+.ovhead h1{margin:0;font-size:1.9rem}
+.legend{display:flex;gap:12px;margin-left:auto;font-size:.85rem;color:var(--ink2);align-items:center}
+.flow{position:relative;display:grid;grid-template-columns:repeat(8,1fr);gap:14px;margin:26px 0 8px}
+.st{position:relative;background:var(--card);border:1.6px solid var(--ink);border-radius:var(--r);padding:10px 10px 12px;cursor:pointer;transition:transform .15s;display:flex;flex-direction:column;gap:4px}
+.st:hover{transform:translateY(-3px)}
+.st.plan{border-style:dashed}
+.st.sel{box-shadow:0 0 0 4px var(--lampsoft);border-color:var(--lamp)}
+.st:not(:last-child)::after{content:"→";position:absolute;right:-14px;top:52px;color:var(--ink2);font-size:1rem}
+.st .no{font-size:.75rem;color:var(--ink2)}
+.st .nm{font-weight:700;font-size:1.1rem}
+.st svg{width:100%;height:78px}
+.st .fc{font-size:.78rem;color:var(--ink2);line-height:1.35}
+.bracket{display:grid;grid-template-columns:repeat(8,1fr);gap:14px;margin-bottom:20px}
+.bracket div{border-top:2.5px solid var(--lamp);padding-top:6px;font-size:.85rem;color:#8a5a10;text-align:center}
+.bracket div.sim{border-top-style:dashed;border-color:var(--line);color:var(--ink2)}
+.detail{display:grid;grid-template-columns:1.1fr 1fr;gap:22px}
+.detail .box h3{margin-top:0}
+.scrlist{display:flex;flex-direction:column;gap:8px}
+.scrlist .btn{width:100%}
+.facgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.facgrid .fi{border:1.4px solid var(--line);border-radius:var(--r);padding:8px 10px;background:var(--card);font-size:.88rem}
+.facgrid .fi b{display:block}
+.route{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.95rem}
+.route span.s{padding:3px 10px;border:1.4px solid var(--ink);border-radius:10px;background:var(--card)}
+
+/* modal / toast / demo */
+.modalbg{position:fixed;inset:0;background:rgba(51,49,45,.35);display:flex;align-items:center;justify-content:center;z-index:50;animation:fade .2s}
+.modal{background:var(--paper);border:1.8px solid var(--ink);border-radius:var(--r);padding:26px 30px;max-width:520px;width:92%;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 22px;border-radius:14px;z-index:60;animation:fade .3s;max-width:90%}
+.demo{position:fixed;right:14px;bottom:14px;z-index:30;font-size:.85rem}
+.demo summary{cursor:pointer;background:var(--card);border:1.4px solid var(--line);border-radius:12px;padding:4px 12px;color:var(--ink2);list-style:none}
+.demo .dp{position:absolute;right:0;bottom:36px;background:var(--card);border:1.5px solid var(--ink);border-radius:var(--r);padding:12px 14px;width:290px;display:flex;flex-direction:column;gap:8px}
+.demo .dp .chips{margin:0;gap:6px}
+.demo .btn{padding:3px 10px;font-size:.82rem}
+.crisis{border:2px solid var(--red);border-radius:var(--r);background:#fff;padding:14px 18px;margin:12px 0;max-width:620px}
+
+.notice{background:var(--card);border:1.5px dashed var(--lamp);border-radius:12px;padding:6px 14px;font-size:.88rem;color:#8a5a10;margin-bottom:14px;display:inline-block}
+.sand{position:relative;max-width:620px;min-height:130px;background:#efe3c8;border-radius:var(--r);padding:24px 28px;overflow:hidden;font-size:1.3rem;color:#7a6a4c;margin:14px 0}
+.sand .tx{animation:erase 2.4s 1.1s forwards;white-space:pre-wrap}
+.sand .wv{position:absolute;left:-110%;top:0;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(185,207,205,.95) 40%,rgba(219,230,228,.95) 70%,transparent);animation:wave 2.8s .9s ease-in-out forwards}
+@keyframes erase{to{opacity:0;filter:blur(6px)}}
+@keyframes wave{to{left:110%}}
+.mapwrap{grid-template-columns:1fr 340px}
+@media (max-width:820px){
+  body{font-size:16px}
+  .scene{grid-template-columns:1fr;min-height:auto}
+  .scene .art svg{max-width:160px}
+  .bubble::before{display:none}
+  .mapwrap,.detail,.grid2,.grid3{grid-template-columns:1fr}
+  .flow,.bracket{grid-template-columns:repeat(2,1fr)}
+  .st:not(:last-child)::after{display:none}
+  .facgrid{grid-template-columns:repeat(2,1fr)}
+  header{flex-wrap:wrap;padding:8px 12px;gap:8px}
+  main{padding:14px 14px 90px}
+  .opts .btn{min-width:0;width:100%}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="pencil"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.2"/></filter>
+</svg>
+<header>
+  <div class="brand"><i></i>登大人島</div>
+  <div class="hsp"></div>
+  <span id="hw" class="row" style="margin:0;gap:8px">
+    <button class="hbtn" data-quick="map">地圖</button>
+    <button class="hbtn" data-quick="bag">貝殼袋</button>
+    <button class="hbtn need" data-quick="lighthouse">需要人</button>
+  </span>
+</header>
+<main id="stage"></main>
+<details class="demo" id="demo">
+  <summary>展演控制</summary>
+  <div class="dp" id="dp"></div>
+</details>
+<div id="modalroot"></div>
+
+<script>
+/* ============ 基本工具 ============ */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let H={},hid=0,timers=[],mounts=[],cur={name:'dock'},VIEW='overview';
+function h(fn){const id='h'+(hid++);H[id]=fn;return id;}
+function B(label,fn,cls=''){return `<button class="btn ${cls}" data-h="${h(fn)}">${label}</button>`;}
+function L(label,fn){return `<button class="linkb" data-h="${h(fn)}">${label}</button>`;}
+function later(fn,ms){timers.push(setTimeout(fn,ms));}
+function mount(fn){mounts.push(fn);}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-h]'); if(t&&H[t.dataset.h]){H[t.dataset.h](t,e);return;}
+  const v=e.target.closest('[data-view]'); if(v){setView(v.dataset.view);return;}
+  const fl=e.target.closest('[data-flip]'); if(fl){fl.classList.toggle('flip');return;}
+  const q=e.target.closest('[data-quick]'); if(q){saveProgress();setView('walk',true);go(q.dataset.quick);return;}
+});
+function toast(msg){const d=document.createElement('div');d.className='toast';d.textContent=msg;document.body.appendChild(d);setTimeout(()=>d.remove(),2800);}
+function modal(html){$('#modalroot').innerHTML=`<div class="modalbg"><div class="modal">${html}</div></div>`;}
+function closeModal(){$('#modalroot').innerHTML='';}
+
+/* ============ 狀態（展演版：只存在這個分頁的記憶體，重新整理就清空） ============ */
+function fresh(){return {cards:[],skills:{present:[0,0,0],defuse:[0,0,0]},bottles:[],kept:[],ifthen:null,inprogress:null,emails:[],visits:0,forceSit:null,reviewDue:false,mapLit:null,lastQuick:'雙腳踩地，慢慢吐一口氣',returned:false,done:[],last:null,greetN:0};}
+let S=fresh();
+let U=null; // 練習單元進行中
+let K={};   // 站穩一分鐘／快速版的內部狀態
+
+function addCard(c){const i=S.cards.findIndex(x=>x.id===c.id);if(i>=0){c.log=S.cards[i].log||[];if(!c.when&&S.cards[i].when){c.when=S.cards[i].when;c.do=S.cards[i].do;c.it=S.cards[i].it;}S.cards[i]=c;}else{c.log=c.log||[];S.cards.push(c);}did(c.id,c.title);}
+function did(k,title){if(!S.done.includes(k))S.done.push(k);S.last={k,title};}
+function today(){const d=new Date();return (d.getMonth()+1)+'/'+d.getDate();}
+function pickLine(arr){return arr[(S.greetN++)%arr.length];}
+function cardWithPlan(){return [...S.cards].reverse().find(c=>c.when);}
+const CRISIS=['想死','不想活','自殺','結束生命','傷害自己','活不下去','去死'];
+function crisis(t){return CRISIS.some(w=>t.includes(w));}
+function crisisBox(){return `<div class="crisis"><b>你寫下的話聽起來很重。現在就有人可以聽：</b><br>1925 安心專線（24 小時、免付費）<br>1995 生命線（24 小時）<br>1980 張老師<br><span class="tiny">你也可以繼續寫，這些字不會公開。</span> ${L('去燈塔',()=>go('lighthouse'))}</div>`;}
+
+/* ============ 線稿 ============ */
+const ACHAO=`<svg viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg"><circle cx="52" cy="240" r="34" fill="#e09a2e" opacity=".22"/><g fill="none" stroke="#33312d" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" filter="url(#pencil)">
+<path d="M162 292 C150 232 158 150 178 118 C194 150 194 232 178 292 Z"/><path d="M170 282 L178 128"/>
+<path d="M80 160 C70 200 66 240 70 292"/><path d="M130 160 C140 200 142 240 138 292"/><path d="M80 160 C95 150 115 150 130 160"/><path d="M92 160 l13 18 l13 -18"/>
+<circle cx="105" cy="120" r="26"/><ellipse cx="105" cy="99" rx="48" ry="10"/><path d="M80 98 C82 74 128 74 130 98"/><path d="M84 92 h42"/>
+<path d="M94 121 q3 3 6 0"/><path d="M110 121 q3 3 6 0"/><path d="M98 133 q7 5 14 0"/>
+<path d="M80 172 C66 192 58 206 52 216"/><path d="M130 174 C140 192 150 198 160 200"/>
+<path d="M52 216 v8"/><path d="M40 226 l12 -8 l12 8"/><rect x="40" y="226" width="24" height="30" rx="4"/></g><circle cx="52" cy="241" r="7" fill="#e09a2e"/></svg>`;
+
+const IC={
+dock:`<path d="M-32 -6 h64 M-32 4 h64 M-24 -6 v30 M0 -6 v30 M24 -6 v30 M-36 26 q10 -6 20 0 q10 6 20 0 q10 -6 20 0 q10 6 20 0"/>`,
+board:`<rect x="-24" y="-28" width="48" height="32" rx="2"/><path d="M-17 4 v24 M17 4 v24 M-15 -19 h22 M-15 -11 h30 M-15 -3 h16"/>`,
+haven:`<path d="M-36 -18 q-6 30 18 40 M36 -18 q6 30 -18 40"/><path d="M-22 8 q22 14 44 0 z"/><path d="M0 8 v-30 l16 22 h-16"/>`,
+hut:`<path d="M-26 22 v-22 l26 -18 l26 18 v22 z"/><rect x="-7" y="6" width="14" height="16"/><path d="M32 24 q8 -24 0 -46 q-8 22 0 46"/>`,
+lighthouse:`<path d="M-11 28 l4 -42 h14 l4 42 z"/><rect x="-9" y="-26" width="18" height="12"/><path d="M-7 -26 l7 -9 l7 9 M-9 0 h18 M-10 14 h20"/><path stroke="#e09a2e" stroke-width="2.6" d="M12 -20 l26 -9 M12 -20 l26 7 M-12 -20 l-26 -9 M-12 -20 l-26 7"/>`,
+beach:`<g transform="rotate(25)"><path d="M-6 -26 h12 v8 q10 6 10 18 v22 h-32 v-22 q0 -12 10 -18 z"/><path d="M-8 -2 h14 M-8 5 h9"/></g><path d="M-34 26 q12 -6 24 0 q12 6 24 0 q12 -6 20 0"/>`,
+bag:`<path d="M-24 -6 q24 -10 48 0 l-5 32 h-38 z"/><path d="M-12 -9 q12 -18 24 0"/><path d="M-8 10 q8 -10 16 0 q-8 10 -16 0"/>`,
+street:`<path d="M-32 22 v-18 l10 -8 l10 8 v18 M-10 22 v-26 l10 -8 l10 8 v26 M12 22 v-14 l9 -7 l9 7 v14 M-36 22 h72"/>`,
+tea:`<path d="M-24 22 v-20 l24 -16 l24 16 v20 z"/><path d="M-8 22 v-12 h16 v12"/><path d="M28 -16 h12 v9 q0 7 -6 7 q-6 0 -6 -7 z M34 -22 q2 -4 0 -7"/>`,
+site:`<path d="M-15 24 l15 -42 l15 42 z M-22 24 h44 M-10 8 h20 M-6 -6 h12"/><path d="M22 24 v-44 h18 M30 -20 v14"/>`,
+island:`<path d="M-34 6 C-38 -14 -14 -24 6 -22 C26 -20 38 -8 34 8 C30 22 6 26 -12 22 C-26 20 -32 14 -34 6 Z"/><path d="M-40 26 q10 -5 20 0 q10 5 20 0 q10 -5 20 0 q10 5 20 0"/>`,
+back:`<path d="M-26 22 v-20 l26 -18 l26 18 v20 z"/><path d="M-6 22 v-12 h12 v12"/><path d="M-40 -6 q-4 -14 8 -18 M-34 -24 l2 6 l-6 -2"/>`,
+senior:`<circle cx="-12" cy="-12" r="8"/><path d="M-12 -4 v20 M-22 26 l10 -10 l10 10 M-22 4 h20"/><circle cx="16" cy="-4" r="6"/><path d="M16 2 v14 M8 26 l8 -10 l8 10"/><path stroke="#e09a2e" d="M-2 -18 q8 -8 16 0"/>`
+};
+function icon(k,size=84,warm){return `<svg viewBox="-45 -40 90 72" width="${size}" height="${size*0.8}"><g fill="none" stroke="#33312d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" filter="url(#pencil)">${IC[k]}</g></svg>`;}
+
+/* ============ 島的資料 ============ */
+const FAC={
+ dock:{n:'碼頭',line:'從這裡上岸，也從這裡離開',btn:'找阿潮',to:'dock',x:470,y:505,st:'run'},
+ board:{n:'公佈欄',line:'島上的規矩和最新消息',btn:'看一下',to:'bulletin',x:370,y:430,st:'run'},
+ haven:{n:'避風港',line:'很亂的時候，進來就能跟著做',btn:'進去坐一下',to:'haven',x:230,y:320,st:'run'},
+ hut:{n:'浪板小屋',line:'建立情緒肌肉',btn:'去練一個',to:'hut',x:825,y:300,st:'run'},
+ lighthouse:{n:'燈塔',line:'需要人的時候，燈一直亮著',btn:'看看誰可以聯絡',to:'lighthouse',x:770,y:140,st:'run'},
+ beach:{n:'漂流瓶海灘',line:'撿一句話，也留一句話',btn:'去海邊',to:'beach',x:680,y:440,st:'run'},
+ bag:{n:'貝殼袋',line:'你從島上帶走的東西',btn:'打開貝殼袋',to:'bag',x:545,y:360,st:'run'},
+ street:{n:'生活街',line:'前輩怎麼自己生活',btn:'逛逛',to:'street',x:420,y:255,st:'site'},
+ tea:{n:'前輩茶屋',line:'前輩留下的經驗',btn:'進去聽故事',to:'tea',x:575,y:185,st:'site'},
+ site:{n:'工地',line:'整修中，之後會開放',btn:'看看在蓋什麼',to:'site',x:300,y:175,st:'site'}
+};
+const STATUS={run:['run','展演可體驗'],sim:['sim','可模擬示範'],plan:['plan','用圖說・之後會有'],site:['plan','工地']};
+function tag(s){const[a,b]=STATUS[s];return `<span class="tag ${a}">${b}</span>`;}
+
+/* ============ 地圖 ============ */
+function mapSVG(lit=[],focus=null){
+  const facs=Object.entries(FAC).map(([k,f])=>`<g class="fac ${f.st==='site'?'site':''} ${lit.includes(k)?'lit':''} ${focus===k?'focus':''}" data-h="${h(()=>pickFac(k))}" transform="translate(${f.x} ${f.y})">
+   <circle class="glow" r="46"/><g class="ic" fill="none" stroke="#33312d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" filter="url(#pencil)">${IC[k]}</g>
+   <text class="lab" y="50" text-anchor="middle" font-size="19" fill="#33312d">${f.n}${f.st==='site'?'（整修中）':''}</text></g>`).join('');
+  return `<svg viewBox="0 0 1000 570" xmlns="http://www.w3.org/2000/svg">
+   <rect width="1000" height="570" rx="22" fill="#dbe6e4"/>
+   <g fill="none" stroke="#b9cfcd" stroke-width="2" stroke-linecap="round">
+    <path d="M40 80 q20 -10 40 0 q20 10 40 0"/><path d="M880 60 q20 -10 40 0 q20 10 40 0"/><path d="M60 500 q20 -10 40 0 q20 10 40 0"/><path d="M860 520 q20 -10 40 0 q20 10 40 0"/><path d="M120 250 q16 -8 32 0"/></g>
+   <path d="M160 300 C140 190 260 105 400 96 C540 82 650 66 770 118 C900 170 915 285 862 375 C812 462 668 492 520 488 C380 484 228 452 186 392 Z" fill="#f5f0e6" stroke="#33312d" stroke-width="2.4" filter="url(#pencil)"/>
+   <path d="M330 340 q90 -30 180 10 q80 30 170 0" fill="none" stroke="#bdb5a6" stroke-width="2" stroke-dasharray="6 7"/>
+   
+   ${facs}</svg>`;
+}
+let MAPSEL=null;
+function pickFac(k){MAPSEL=k;renderMapSide();}
+function renderMapSide(){
+  const el=$('#mside'); if(!el)return;
+  if(!MAPSEL){el.innerHTML=greet();return;}
+  const f=FAC[MAPSEL];
+  el.innerHTML=`<div class="mcard"><div style="display:flex;gap:10px;align-items:center">${icon(MAPSEL,60)}<div><h3 style="margin:0">${f.n}</h3>${tag(f.st)}</div></div><p>${f.line}</p><div class="row">${B(f.btn,()=>go(f.to),'primary')}${MAPSEL==='dock'?B('直接離島',()=>go('leave'),'sm'):''}${B('回到阿潮這裡',()=>{MAPSEL=null;renderMapSide()},'ghost sm')}</div></div>`;
+}
+function tip(t){const a=Array.isArray(t)?t:[t];return `<div class="tipbox">${ACHAO}<div class="bubble"><div class="who">阿潮</div>${a.map(x=>`<p>${x}</p>`).join('')}</div></div>`;}
+function greet(){
+  if(S.mapTip)return tip(S.mapTip);
+  if(S.greetOff)return tip('想找我的話，點碼頭就好。')+`<div class="row">${B('找阿潮',()=>go('dock'),'sm')}</div>`;
+  const sit=situation();
+  if(sit==='A')return tip(['嗨，剛上岸吧？我是阿潮。','這裡可以練習照顧情緒，也可以撿一句別人留下的話。今天沒什麼困擾，也能來逛逛。'])+`<div class="opts" style="animation-delay:.9s">${B('先喘口氣（1 分鐘）',()=>startSteady({from:'haven'}),'primary')}${B('跟我逛一圈（約 1 分鐘）',()=>{TOUR=0;go('tour')})}${B('我有一件事想處理',()=>go('dock',{sit:'A1'}))}${B('我自己逛',()=>{S.greetOff=true;renderMapSide()},'ghost sm')}</div>`;
+  if(sit==='S')return tip([pickLine([`剛剛做完「${S.last.title}」了。`,`「${S.last.title}」收進貝殼袋了。`]),nextHint()])+`<div class="opts" style="animation-delay:.9s">${nextOpts().join('')}${B('我自己逛',()=>{S.greetOff=true;renderMapSide()},'ghost sm')}</div>`;
+  const cp=cardWithPlan();
+  const L2={C:'這麼晚還醒著啊。',D:pickLine(HELLO_BACK),E:pickLine(HELLO_BACK),F:'上次的練習停在一半，要接著做嗎？'};
+  const L3={C:'要聽我說一下嗎？',D:'要聽我說一下嗎？',E:cp?`上次你說，如果${cp.when}，就${cp.do}。這幾天有遇到嗎？`:'',F:''};
+  return tip([L2[sit],L3[sit]].filter(Boolean))+`<div class="row">${sit==='E'&&cp?B('跟阿潮說說',()=>go('review',{id:cp.id}),'primary sm'):B('聽阿潮說',()=>go('dock'),'primary sm')}${B('我自己逛',()=>{S.greetOff=true;renderMapSide()},'ghost sm')}</div>`;
+}
+
+/* ============ 畫面 ============ */
+const SCR={};
+function go(name,arg){
+  timers.forEach(clearTimeout);timers=[];H={};mounts=[];closeModal();
+  cur={name,arg};
+  if(name!=='unit'&&name!=='steady'&&name!=='unhook')document.body.dataset.inpractice='';
+  $('#stage').innerHTML=SCR[name](arg||{});
+  mounts.forEach(f=>f());
+  window.scrollTo(0,0);
+  renderDemo();
+}
+function scene(right){return `<div class="scene"><div class="art">${ACHAO}</div><div>${right}</div></div>`;}
+function say(lines,opts){return scene(`<div class="bubble"><div class="who">阿潮</div>${lines.map(l=>`<p>${l}</p>`).join('')}</div><div class="opts">${opts.join('')}</div>`);}
+function fhead(k,title,sub){return `<div class="fhead">${icon(k,96)}<div><h1>${title}</h1><div class="sub">${sub}</div></div></div>`;}
+
+/* ---- 碼頭：6 種情境 ---- */
+function situation(){
+  if(S.forceSit)return S.forceSit;
+  if(S.inprogress)return 'F';
+  if(S.returned&&S.reviewDue&&cardWithPlan())return 'E';
+  const hr=new Date().getHours(); if(hr>=23||hr<5)return 'C';
+  if(S.returned&&S.cards.length)return 'D';
+  if(S.last)return 'S';
+  return 'A';
+}
+SCR.dock=a=>{
+  const sit=a.sit||situation();
+  const toMap=(lit)=>()=>{S.mapLit=lit||null;go('map')};
+  if(sit==='A') return say(['嗨，你剛上岸吧？我是阿潮，在這座島住一陣子了。','這裡可以練習照顧情緒，也可以撿一句別人留下的話；今天沒什麼困擾，也能來逛逛。','我猜你現在想……'],[
+    B('先喘口氣（1 分鐘）',()=>startSteady({from:'haven'}),'primary'),
+    a.afterTour?'':B('看看這座島',()=>{TOUR=0;go('tour')}),
+    B('我有一件事想處理',()=>go('dock',{sit:'A1'})),
+    B('都不是，我自己逛',toMap()),B('我要離開了',()=>go('leave'),'ghost sm')]);
+  if(sit==='A1') return say(['好。是心裡的事，還是生活上的事？'],[
+    B('心裡卡卡的',()=>go('hut'),'primary'),B('生活上有事要搞定（還在籌備）',()=>go('street')),B('說不上來',()=>go('dock',{sit:'B'}))]);
+  if(sit==='B') return say(['也是，有時候就是說不上來。','我猜先坐一下也不錯？'],[
+    B('先坐一下',()=>go('haven'),'primary'),B('隨便看看',toMap(['haven','hut'])),B('都不是',toMap())]);
+  if(sit==='C') return say(['這麼晚還醒著啊。','我猜你現在想……'],[
+    B('讓腦袋安靜一點',()=>go('haven'),'primary'),B('放下一件心事',()=>go('letgo')),B('我只是逛逛',toMap()),B('都不是',toMap())]);
+  if(sit==='D'){const c=S.cards[S.cards.length-1]||{title:'站穩一分鐘'};const cp=cardWithPlan();
+    return say([pickLine(HELLO_BACK),cp?`上次你留了一句：如果${cp.when}，就${cp.do}。有用到的話，可以跟我說說。`:`上次的「${c.title}」還在貝殼袋裡。`],[
+    cp?B('記一下用到的時候',()=>go('review',{id:cp.id}),'primary'):B('翻一下貝殼袋',()=>go('bag'),'primary'),
+    B(`再做一次「${c.title}」的快速版`,()=>c.unit==='defuse'?startUnhook():startSteady({from:'haven'})),B('先喘口氣',()=>startSteady({from:'haven'})),B('都不是',toMap())]);}
+  if(sit==='E'){const cp=cardWithPlan();return SCR.review({id:cp?cp.id:null});}
+  if(sit==='S'){const t=S.last.title;
+    return say([pickLine([`剛剛做完「${t}」了。`,`「${t}」做完啦。`,`嗯，「${t}」收好了。`]),nextHint()],nextOpts().concat([B('都不是',toMap())]));}
+  if(sit==='F'){const p=S.inprogress||{id:'defuse',step:6,seg:'自己做一次'};const t=UNITS[p.id].title;return say([`上次的「${t}」停在「${p.seg}」那裡。`,'要接著做嗎？'],[
+    B('接著做',()=>{S.inprogress=null;S.forceSit=null;startUnit(p.id,p.step,p.d)},'primary'),B('從頭來',()=>{S.inprogress=null;S.forceSit=null;startUnit(p.id,0)}),B('今天先不要',toMap()),B('都不是',toMap())]);}
+};
+
+const HELLO_BACK=['欸，你回來了。','又見面了。','今天的浪還好嗎？','好一陣子沒看到你，島上一樣慢慢的。'];
+function nextHint(){
+  if(S.last&&S.last.k==='letgo')return '要不要再坐一下，或直接離島都可以。';
+  if(S.last&&S.last.k==='bottle')return '你的瓶子在岸邊等著漂出去了。想走的時候，從碼頭離島就好。';
+  if(!S.done.includes('beach'))return pickLine(['海邊有別的島民留的話，可以去撿一個。','想再走走的話，海邊有人留了話給你。']);
+  return pickLine(['想走的時候，從碼頭離島就好。','累了就直接離島，也很好。']);}
+function nextOpts(){const o=[];
+  if(S.last&&S.last.k==='letgo')o.push(B('再坐一下，什麼都不做',()=>go('rest'),'primary'));
+  else if(!S.done.includes('beach'))o.push(B('去海邊看看',()=>go('beach'),'primary'));
+  o.push(B('帶著卡片離島',()=>go('leave'),o.length?'':'primary'));
+  if(!S.done.includes('present')&&!S.done.includes('defuse'))o.push(B('去浪板小屋練完整的',()=>go('hut')));
+  return o;}
+/* ---- 阿潮導覽 7 站 ---- */
+let TOUR=0;
+const TOURS=[
+ {f:['dock'],t:'這是碼頭，大家都從這裡上岸。我當年也是被浪打上來的。'},
+ {f:['haven'],t:'很亂的時候先來這裡。不用想、不用選，進去就能跟著做。'},
+ {f:['hut'],t:'比較有力氣的時候，可以來這裡練情緒肌肉。練的不是不要有情緒，是有情緒也站得穩。'},
+ {f:['bag'],t:'你在島上做過的練習，會變成卡片收在這裡。下次回來，東西都還在。'},
+ {f:['beach'],t:'島民會在這裡留一句話給下一個人。撿一個看看，也可以丟一個。'},
+ {f:['street','tea'],t:'這兩條街放前輩的經驗：一邊是怎麼做，一邊是他們經歷了什麼。還在整修，有些門還沒開。'},
+ {f:['lighthouse'],t:'最後是燈塔。我幫不上的時候，那邊有人可以，它一直都亮著。'}];
+SCR.tour=()=>{const s=TOURS[TOUR];
+  return `<div class="mapwrap"><div class="map">${mapSVG(s.f,s.f[0])}</div><div class="side">
+  <div class="tiny">阿潮導覽　${TOUR+1} / 7</div>${tip(s.t)}
+  <div class="row">${TOUR<6?B('下一站 →',()=>{TOUR++;go('tour')},'primary'):B('差不多就這樣',()=>go('dock',{sit:'A',afterTour:1}),'primary')}${B('我自己逛就好',()=>{S.mapLit=null;go('map')},'ghost sm')}</div></div></div>`;};
+
+/* ---- 全島地圖 ---- */
+SCR.map=()=>{MAPSEL=null;const lit=S.mapLit||['dock','haven','hut','lighthouse','beach','bag','board'];
+  if(S.mapLit)S.mapTip='我幫你把避風港和浪板小屋點亮了，看哪個順眼。';
+  mount(()=>{renderMapSide();S.mapTip=null;S.mapLit=null;});
+  return `<div class="notice">展演版：你在島上做的事只留在這個畫面，重新整理或下一位來賓開始時就會清空。</div><div class="mapwrap"><div class="map">${mapSVG(lit)}</div><div class="side" id="mside"></div></div>`;};
+
+/* ---- 避風港 ---- */
+SCR.haven=()=>`<div class="fpage">${fhead('haven','避風港','先坐一下。要不要做什麼，等一下再說。')}
+  <div class="row" style="margin:30px 0">${B('先坐一下，什麼都不做',()=>go('rest'),'primary huge')}${B('跟著做一分鐘（站穩）',()=>startSteady({from:'haven'}),'huge')}</div>
+  <div class="grid2">
+   <div class="box"><b>鬆開一句話（1 分鐘）</b><p class="tiny">有一句話一直在腦袋裡繞</p>${B('開始',()=>startUnhook(),'sm')}</div>
+   <div class="box"><b>放下一件心事</b><p class="tiny">寫在沙灘上、讓浪抹掉，不會存</p>${B('開始',()=>go('letgo'),'sm')}</div></div>
+  <p class="row">${L('想完整學這些練習？去浪板小屋 →',()=>go('hut'))}</p>
+  <p class="src">站穩一分鐘參考：情緒命名研究、長吐氣呼吸（循環嘆息）研究、WHO 接地練習。三者串成一分鐘是本專案的設計，尚未測試。</p></div>`;
+
+/* ---- 站穩一分鐘（避風港主練習／回到當下快速版） ---- */
+const FEEL=['比較穩一點','差不多','說不上來','更不舒服'];
+function feelAsk(onPick){return `<h2>做完了。現在感覺怎麼樣？</h2><p class="lead">照實選就好，沒有標準答案。</p><div class="chips">${FEEL.map(x=>B(x,()=>onPick(x),'chip')).join('')}</div>`;}
+function feelReply(f,what){
+  if(f==='比較穩一點')return `<h2>好。記住剛剛${what}，下次需要的時候可以再用。</h2>`;
+  return `<h2>這次沒有明顯變化也沒關係，可以先停在這裡。</h2><p class="lead">有時候要多做幾次，有時候是今天不適合，兩種都正常。</p>`;}
+function worseHTML(){S.worse=1;return `<h2>那就先停下這個練習。</h2><p class="lead">更不舒服是很重要的訊號，不用勉強自己做完。</p><div class="row">${B('什麼都不做，坐一下就好',()=>go('rest'),'primary')}${B('去燈塔找人',()=>go('lighthouse'))}${B('先離島',()=>go('leave'))}</div>`;}
+function exits(){return `<div class="row">${B('帶著卡片離島',()=>go('leave'),'primary')}${B('去海邊看看',()=>go('beach'))}${L('再逛逛',()=>go('map'))}</div>`;}
+const KEEPNOTE='<p class="tiny">卡片不會自動存到你的手機裡：想帶走可以截圖。展演版資料在下一位來賓開始時會清空。</p>';
+SCR.rest=()=>`<div class="fpage" style="text-align:center;padding-top:60px"><p class="big">坐著就好，什麼都不用做。</p><p class="lead">想走的時候再按。</p><div class="row" style="justify-content:center">${B('先到這裡（離島）',()=>go('leave'),'primary')}${B('回地圖逛逛',()=>go('map'))}${B('去燈塔找人',()=>go('lighthouse'))}</div></div>`;
+function startSteady(o){S.worse=0;K={i:0,short:!!o.short,from:o.from||'haven',emo:null,see:0,ph:0,alt:false,onDone:o.onDone};go('steady');}
+function saveProgress(){
+  if(typeof U==='undefined'||!U||U.fin)return false;
+  const inUnit=cur.name==='unit'||((cur.name==='steady'||cur.name==='unhook')&&K&&K.from==='unit');
+  if(!inUnit)return false;
+  S.inprogress={id:U.id,step:U.step,seg:SEGS[UNITS[U.id].steps[U.step].seg]||'最後',d:JSON.parse(JSON.stringify(U.d))};
+  const extra=[...document.querySelectorAll('#stage textarea,#stage input[type=text]')].some(el=>el.value.trim())?'剛打的字還沒送出，不會被保存。':'';
+  toast('停在哪裡幫你記著了，下次可以接著做。'+extra);return true;
+}
+function leaveHere(){
+  saveProgress();S.mapLit=null;go('map');
+}
+function cantDo(){
+  modal(`<p class="big">沒關係，做不到也是一種訊息。</p>${B('只做一個更小的（8 秒）',smaller,'primary')}${B('先到這裡',()=>{closeModal();leaveHere()})}${B('去燈塔找人',()=>{closeModal();go('lighthouse')})}`);
+}
+function smaller(){
+  modal(`<p class="big">雙腳踩地，感覺地板。慢慢吐一口氣。</p><svg class="ring" viewBox="0 0 170 170"><circle cx="85" cy="85" r="70" fill="none" stroke="#bdb5a6" stroke-width="3"/><circle class="p" cx="85" cy="85" r="70" fill="none" stroke="#e09a2e" stroke-width="6" stroke-linecap="round" transform="rotate(-90 85 85)"/></svg><div id="sm2" class="hide" style="width:100%"><p>要接著做，還是先到這裡？</p><div class="row">${B('接著做',closeModal,'primary')}${B('先到這裡',()=>{closeModal();leaveHere()})}</div></div>`);
+  later(()=>{const e=$('#sm2');if(e)e.classList.remove('hide')},8000);
+}
+function pframe({title,segs,seg,body,source,onLeave}){
+  return `<div class="pr"><div class="prtop">${B('← 先到這裡',onLeave||leaveHere,'ghost sm')}<div class="prtitle">${title}</div>
+   <div class="segs">${segs.map((s,i)=>`<span class="seg ${i<seg?'done':i===seg?'on':''}">${s}</span>`).join('')}</div></div>
+   <div class="prbody">${body}</div>
+   <div class="prfoot"><span class="src">${source||''}</span>${B('現在做不到',cantDo,'ghost sm')}</div></div>`;
+}
+SCR.steady=()=>{
+  const segs=K.short?['叫出名字','吐氣一輪','看 3 樣']:['叫出名字','長長吐氣','看聽摸','我在哪'];
+  const nx=(i)=>()=>{K.i=i;go('steady')};
+  let body='';
+  if(K.i===0){
+    if(!K.emo) body=`<p class="lead">跟著畫面做就好，隨時可以停。</p><h2>現在比較像哪一種？點一個就好。</h2>
+      <div class="chips">${['煩','慌','累','悶','難過','說不上來','還好，只想試試'].map(x=>B(x,()=>{K.emo=x;go('steady')},'chip')).join('')}</div>
+      ${K.short||K.from==='unit'?'':`<p class="right">${L('只要 30 秒 →',()=>{K.short=true;go('steady')})}</p>`}`;
+    else{body=`<h2>${K.emo==='說不上來'?'說不上來也是一種答案。':K.emo==='還好，只想試試'?'好，那就輕鬆練一次，當作認識這座島。':`好，是「${K.emo}」。它在，沒關係。`}</h2><p class="tiny">選的字不會存。</p><div class="row">${B('繼續',nx(1),'primary')}</div>`;
+      mount(()=>later(nx(1),2200));}
+  } else if(K.i===1){
+    if(K.alt){body=`<h2>雙手互壓 5 秒，再放開。</h2><div class="count" id="cnt">5</div>`;
+      mount(()=>{let n=5;const tick=()=>{n--;const el=$('#cnt');if(!el)return;if(n<=0){el.textContent='放開';later(()=>{K.alt=false;K.i=2;go('steady')},1300)}else{el.textContent=n;later(tick,1000)}};later(tick,1000)});}
+    else if(!K.ready){const rounds=K.short?1:3;
+      body=`<h2>接下來呼吸 ${rounds} 輪。</h2><p class="lead">用鼻子吸一口，再補吸一小口；然後用嘴巴慢慢吐，吐得比吸的長。<br>跟著圓圈變大、變小就好。</p><div class="breath" style="height:200px"><div class="bc"></div></div>
+        <div class="row">${B('準備好了',()=>{K.ready=1;go('steady')},'primary')}${B('呼吸讓我更不舒服',()=>{K.alt=true;go('steady')},'ghost sm')}${B('跳過這步',nx(2),'ghost sm')}</div>`;}
+    else{const rounds=K.short?1:3;
+      body=`<h2 id="bt">開始囉</h2><div class="breath"><div class="bc" id="bc"></div></div><p class="tiny" id="br">共 ${rounds} 輪　頭暈就放慢。</p>
+        <div class="row">${B('呼吸讓我更不舒服',()=>{K.alt=true;go('steady')},'ghost sm')}${B('跳過這步',nx(2),'ghost sm')}</div>`;
+      mount(()=>{let r=0;const cyc=()=>{const bc=$('#bc'),bt=$('#bt'),br=$('#br');if(!bc)return;
+        br.textContent=`第 ${r+1} / ${rounds} 輪　頭暈就放慢。`;bt.textContent='用鼻子吸一口……';bc.style.transition='transform 2s ease-out';bc.style.transform='scale(1.3)';
+        later(()=>{bt.textContent='再補吸一小口';bc.style.transition='transform 1s ease-out';bc.style.transform='scale(1.45)'},2000);
+        later(()=>{bt.textContent='用嘴巴慢慢吐，吐得比吸的長……';bc.style.transition='transform 5.5s ease-in-out';bc.style.transform='scale(.75)'},3000);
+        later(()=>{r++;if(r<rounds)cyc();else{bt.textContent='好。';later(nx(2),900)}},8800);};later(cyc,600);});}
+  } else if(K.i===2){
+    if(K.ph===0) body=`<h2>看看四周，找 3 樣看得到的東西。</h2><p class="lead">每找到一樣，就點一個圈。</p>
+      <div class="dots">${[0,1,2].map(j=>`<button class="dot ${j<K.see?'on':''}" data-h="${h(()=>{if(K.see<3){K.see++;go('steady');if(K.see>=3)later(()=>{if(K.short){K.i=3;K.end=1}else K.ph=1;go('steady')},600)}})}"></button>`).join('')}</div>`;
+    else if(K.ph===1) body=`<h2>現在聽得到什麼聲音？</h2><p class="lead">停一下，找一個聲音。</p><div class="row">${B('聽到了',()=>{K.ph=2;go('steady')},'primary')}${B('找不到，先跳過',()=>{K.ph=2;go('steady')},'ghost sm')}</div>`;
+    else body=`<h2>摸一下身邊的東西，是什麼觸感？</h2><div class="chips">${['軟的','硬的','涼的','暖的','說不上來'].map(x=>B(x,nx(3),'chip')).join('')}</div>`;
+  } else if(K.i===3&&!K.end){
+    body=`<h2>你在哪裡？現在在做什麼？</h2><p class="lead">在心裡回答就好。</p><div class="row">${B('繼續',()=>{K.end=1;go('steady')},'primary')}</div>`;
+  } else {
+    if(K.from==='unit'&&K.onDone){mount(()=>K.onDone());return '';}
+    if(!K.feel){body=feelAsk(x=>{K.feel=x;go('steady')});return pframe({title:'站穩一分鐘',segs,seg:segs.length,body,source:'參考情緒命名、長吐氣呼吸研究與 WHO 接地練習',onLeave:()=>go('map')});}
+    if(K.feel==='更不舒服'){body=worseHTML();return pframe({title:'站穩一分鐘',segs,seg:segs.length,body,source:'',onLeave:()=>go('map')});}
+    S.skills.present[0]=1;S.lastQuick='叫出名字、長長吐氣、看三樣東西';S.lastQuickUnit='present';S.worse=0;
+    addCard({id:'steady',unit:'present',title:'站穩一分鐘',front:'<b>叫出名字 → 長長吐氣 → 看三樣</b><br>風暴可能還在，你可以先站穩一下。',back:'30 秒版：一輪長吐氣 → 看 3 樣東西<br>呼吸不舒服時：雙手互壓 5 秒<br>平常沒事的時候也練，風暴來時比較想得起來。'});
+    body=`${feelReply(K.feel,'那三個動作')}<p class="lead">這張卡片收進貝殼袋了，想帶走可以截圖。</p>${cardHTML(S.cards.find(c=>c.id==='steady'))}${KEEPNOTE}${exits()}<p class="tiny">${L('再做一次',()=>startSteady({from:K.from}))}　${L('換一個練習',()=>go('haven'))}</p>`;
+    return pframe({title:'站穩一分鐘',segs,seg:segs.length,body,source:'參考情緒命名、長吐氣呼吸研究與 WHO 接地練習',onLeave:()=>go('map')});
+  }
+  const seg=K.short?Math.min(K.i,2):K.i;
+  return pframe({title:'站穩一分鐘'+(K.short?'・30 秒版':''),segs,seg,body,source:'參考情緒命名、長吐氣呼吸研究與 WHO 接地練習',onLeave:()=>{saveProgress();go(K.from==='unit'?'hut':'haven')}});
+};
+
+/* ---- 鬆開一句話（脫鉤快速版） ---- */
+function startUnhook(){S.worse=0;K={i:0,t:null,feel:null};go('unhook');}
+SCR.unhook=()=>{const segs=['挑一句','我注意到','鬆開','回到眼前'];let body='';
+  if(K.i===0) body=`<h2>腦袋裡現在最大聲的那句話是什麼？</h2><div class="chips col">${['我做不完','我不夠好','以後怎麼辦'].map(t=>B(t,()=>{K.t=t;K.i=1;go('unhook')},'chip')).join('')}</div>
+    <div class="own"><input type="text" id="own" placeholder="自己寫…">${B('用這句',()=>{const v=$('#own').value.trim();if(!v)return;if(crisis(v)){$('#cb').innerHTML=crisisBox();return}K.t=v;K.i=1;go('unhook')},'sm')}</div><p class="tiny">這句只留在你的手機上。</p><div id="cb"></div>`;
+  else if(K.i===1){body=`<h2>在它前面加一句，在心裡唸一次：</h2><p class="thought" id="tw"></p><div id="nx" class="hide row">${B('下一步',()=>{K.i=2;go('unhook')},'primary')}</div>`;
+    mount(()=>typewrite($('#tw'),'我注意到我有一個想法：'+K.t,()=>$('#nx').classList.remove('hide')));}
+  else if(K.i===2){body=`<h2>它還在，但你不用抱著它。</h2>${hookHTML(K.t)}<div id="nx" class="hide row">${B('下一步',()=>{K.i=3;go('unhook')},'primary')}</div>`;
+    mount(()=>{later(()=>$('#hk').classList.add('free'),700);later(()=>$('#nx').classList.remove('hide'),2600)});}
+  else if(K.i===3) body=`<h2>回到眼前：雙腳踩地，看一樣你看得到的東西。</h2><div class="row">${B('看到了',()=>{K.i=4;go('unhook')},'primary')}</div>`;
+  else{
+    if(!K.feel){body=feelAsk(x=>{K.feel=x;go('unhook')});return pframe({title:'鬆開一句話',segs,seg:4,body,source:'參考 WHO 壓力自助指引的脫鉤步驟',onLeave:()=>go('map')});}
+    if(K.feel==='更不舒服')return pframe({title:'鬆開一句話',segs,seg:4,body:worseHTML(),source:'',onLeave:()=>go('map')});
+    S.skills.defuse[0]=1;S.lastQuick='在心裡說「我注意到我有一個想法」';S.lastQuickUnit='defuse';S.worse=0;
+    addCard({id:'unhook',unit:'defuse',title:'鬆開一句話',front:'<b>注意 → 「我注意到我有一個想法」→ 回到眼前</b><br>它還在，但你不用抱著它。',back:'被一句話勾住時：在那句話前面加上「我注意到我有一個想法」，再看一樣眼前的東西。'});
+    body=`${feelReply(K.feel,'那三步')}<p class="lead">這張卡片收進貝殼袋了，想帶走可以截圖。</p>${cardHTML(S.cards.find(c=>c.id==='unhook'))}${KEEPNOTE}${exits()}<p class="tiny">${L('再做一次',startUnhook)}　${L('換一個練習',()=>go('haven'))}</p>`;
+    return pframe({title:'鬆開一句話',segs,seg:4,body,source:'參考 WHO 壓力自助指引的脫鉤步驟',onLeave:()=>go('map')});}
+  return pframe({title:'鬆開一句話',segs,seg:K.i,body,source:'參考 WHO 壓力自助指引的脫鉤步驟',onLeave:()=>go('haven')});};
+
+function typewrite(el,text,done){if(!el)return;let i=0;const step=()=>{if(!document.body.contains(el))return;el.textContent=text.slice(0,++i);if(i<text.length)later(step,85);else if(done)later(done,400)};later(step,300);}
+function hookHTML(t){return `<div class="hookwrap" id="hk"><svg viewBox="0 0 90 220"><g fill="none" stroke="#33312d" stroke-width="2.4" stroke-linecap="round" filter="url(#pencil)"><path d="M45 0 V150"/><path d="M45 150 q0 30 -22 30 q-18 0 -18 -18"/><path d="M5 162 l-4 -10"/></g></svg><div class="ht">${esc(t)}</div></div>`;}
+
+/* ---- 放下一件心事 ---- */
+SCR.letgo=a=>{
+  if(a.done) return `<div class="fpage">${fhead('haven','放下一件心事','')}
+   <div class="sand"><div class="tx">${a.t?esc(a.t):'（放在心裡的那件事）'}</div><div class="wv"></div></div>
+   <p class="big" style="opacity:0;animation:fade .6s 3.4s forwards">浪把字帶走了。心事還是你的，只是現在不用拿著。</p>
+   <div class="row" style="opacity:0;animation:fade .6s 3.8s forwards">${B('再坐一下，什麼都不做',()=>go('rest'),'primary')}${B('先離島',()=>go('leave'))}${L('再逛逛',()=>go('map'))}</div></div>`;
+  return `<div class="fpage">${fhead('haven','放下一件心事','寫在沙灘上，浪來就抹掉了。')}
+   <h2>把心事寫在沙上。</h2><textarea id="lg" rows="4" placeholder="寫什麼都可以" style="background:#f6eedc"></textarea><div id="cb"></div>
+   <div class="row">${B('讓浪抹掉',()=>{const v=$('#lg').value;if(crisis(v)&&!a.warned){$('#cb').innerHTML=crisisBox();a.warned=1;return}did('letgo','放下一件心事');go('letgo',{done:1,t:v.trim()})},'primary')}${B('放在心裡就好',()=>{did('letgo','放下一件心事');go('letgo',{done:1})})}</div>
+   <p class="tiny">不會有人看到，也不會存起來。這和漂流瓶不一樣：瓶子會被別的島民撿到，沙上的字只有你看得到。</p></div>`;};
+
+/* ---- 浪板小屋 ---- */
+SCR.hut=a=>`<div class="fpage">${fhead('hut','浪板小屋','建立情緒肌肉')}
+ <div class="box"><p class="big">情緒像浪，會來也會退，沒有人能叫它不要來。情緒肌肉，是浪打過來的時候，你還站得住、還能照顧自己的力氣。它和肌肉一樣靠練，每次幾分鐘就好。</p>
+  <p class="tiny">（三句版 A／B／C 待挑，這裡先放 A）　${L(a.src?'收起來':'這些練習哪裡來的？',()=>go('hut',{src:!a.src}))}</p>
+  ${a.src?`<div style="margin-top:8px"><p>浪板小屋的練習不是我們自己發明的。它們整理自幾種有研究基礎的心理學方法，再改寫成手機上幾分鐘能做完的版本：</p><ul>
+   <li>世界衛生組織（WHO）的壓力自助指引：回到當下、脫鉤等主要步驟。</li><li>接納與承諾取向（ACT）：帶著情緒也能做重要的事這個想法。</li>
+   <li>情緒命名的研究：把感覺說成字，本身就有幫助。</li><li>呼吸與感官接地的研究：避風港的站穩一分鐘。</li><li>「如果—就」計畫的研究：幫你在生活裡想起來。</li><li>還有島上前輩的真實經驗。</li></ul>
+   <p class="tiny">改寫和組合是島上的團隊做的，還在測試，也還沒經過心理專業審閱。它們不是治療，不能取代諮商；如果你需要更多幫助，燈塔那邊有人。</p></div>`:''}</div>
+ <div class="grid3" style="margin-top:16px">
+  ${unitCard('present','回到當下','腦袋很亂、注意力一直被拉走的時候','完整 6–7 分／快速 1 分')}
+  ${unitCard('defuse','脫鉤','被一句話勾住、一直繞不出來的時候','完整 10 分／快速 1 分')}
+  ${siteCard('善待自己','對自己很兇的時候')}${siteCard('依價值行動','不知道自己在忙什麼的時候')}${siteCard('為情緒留空間','不舒服的感覺趕不走的時候')}
+ </div><p class="tiny" style="margin-top:12px">每個單元都可以中途離開，停在哪裡會幫你記著。</p></div>`;
+function skill3(u){const s=S.skills[u];return `<div class="skill3">${['認識了','自己試過','在生活中用過'].map((n,i)=>`<span class="${s[i]?'on':''}">${n}</span>`).join('')}</div>`;}
+function unitCard(id,t,when,time){const ip=S.inprogress&&S.inprogress.id===id;
+  return `<div class="ucard"><div style="display:flex;justify-content:space-between;align-items:center"><h3>${t}</h3>${tag('run')}</div>${skill3(id)}<p>${when}</p><p class="tiny">${time}</p>
+  <div class="row" style="margin-top:auto">${ip?B('接著做',()=>{const p=S.inprogress;S.inprogress=null;startUnit(id,p.step,p.d)},'primary sm'):''}${B('完整練一次',()=>startUnit(id,0),ip?'sm':'primary sm')}${B('只做快速版',()=>id==='present'?startSteady({from:'haven'}):startUnhook(),'ghost sm')}</div></div>`;}
+function siteCard(t,when){return `<div class="ucard site"><div style="display:flex;justify-content:space-between"><h3>${t}</h3>${tag('site')}</div><p>${when}</p><p class="tiny">還在蓋，之後會開放。</p></div>`;}
+
+/* ============ 練習單元引擎 ============ */
+const SEGS=['試一下','看前輩怎麼做','自己做一次','給朋友一句話','帶回生活'];
+function startUnit(id,step,d){U={id,step:step||0,d:d||{}};S.forceSit=null;S.worse=0;go('unit');}
+function nextStep(){U.step++;go('unit');}
+function skipToEnd(){U.step=UNITS[U.id].steps.length-1;go('unit');}
+SCR.unit=()=>{const def=UNITS[U.id];const st=def.steps[U.step];const body=st.r(U.d);if(st.m)mount(()=>st.m(U.d));
+  return pframe({title:def.title,segs:SEGS,seg:st.seg,body,source:def.source});};
+
+function storyStep(d,s,nextLabel){
+  let html=`<div class="story"><div class="who">故事裡的前輩：${s.name}</div>`;
+  html+=s.pre.map(t=>`<p class="line">${t}</p>`).join('');
+  html+=`<p class="q">這段裡，哪個地方最像你？</p>`;
+  if(!d.ch){html+=`<div class="chips">${s.like.map(x=>B(x,()=>{d.ch=x;go('unit')},'chip')).join('')}</div></div>`;return html;}
+  html+=`<p class="line res">${d.ch==='都不像'?`不像也沒關係，看看${s.name}試了什麼就好。`:`「${esc(d.ch)}」——不少前輩也卡過這裡。看看${s.name}試了什麼：`}</p>`;
+  html+=s.post.map(t=>`<p class="line">${t}</p>`).join('');
+  html+=`</div><div class="row">${B(nextLabel||'換我自己做一次',nextStep,'primary')}</div>`;
+  return html;
+}
+function scale5(d,key,after){const labs=['全在腦袋裡','大多在腦袋裡','一半一半','大多在眼前','全在眼前'];
+  return `<div class="scale5">${labs.map((l,i)=>B(l,()=>{d[key]=i;after()},'chip')).join('')}</div>`;}
+function slider(id){return `<div class="rangewrap"><div class="rangeval" id="${id}v">5</div><input type="range" min="0" max="10" value="5" id="${id}"><div class="rangelab"><span>0 幾乎沒感覺</span><span>10 整個被拉走</span></div></div>`;}
+function bindSlider(id){const r=$('#'+id);if(r)r.addEventListener('input',()=>{$('#'+id+'v').textContent=r.value});}
+function dotsTap(d,key,n,after){d[key]=d[key]||0;
+  return `<div class="dots">${Array.from({length:n},(_,j)=>`<button class="dot ${j<d[key]?'on':''}" data-h="${h(()=>{if(d[key]<n){d[key]++;go('unit');if(d[key]>=n)later(after,600)}})}"></button>`).join('')}</div>`;}
+function friendStep(d,o){
+  return `<h2>${o.title}</h2><p class="lead">點一句再改，或自己寫。</p><div class="chips col">${o.presets.map(p=>B(p,()=>{$('#fr').value=p},'chip')).join('')}</div>
+  <textarea id="fr" rows="2" placeholder="${o.pattern}"></textarea><p class="tiny">這句只留在你的手機上。</p>
+  <label class="chk"><input type="checkbox" id="tobeach"> 也讓這句話漂到海灘，給別的島民撿到</label>
+  <p class="tiny">沒勾的話，這句會寫在你的卡片背面，只有你看得到。（展演版：瓶子是模擬送審，不會真的送出。）</p><div id="cb"></div>
+  <div class="row">${B('寫好了',()=>{const v=$('#fr').value.trim();if(v&&crisis(v)){$('#cb').innerHTML=crisisBox();return}
+     if(v){d.fr=v;if($('#tobeach').checked){S.bottles.push({text:v,name:'一位島民',status:'review'});toast('瓶子在岸邊了（展演版為模擬，不會真的送出）。')}}nextStep()},'primary')}${B('跳過也可以',nextStep)}</div>`;
+}
+function remindStep(d,after){
+  return `<h2>什麼會讓你忘記？</h2><div class="chips">${['太忙','當下太情緒','根本沒想到','別的'].map(x=>B(x,()=>{d.forget=x;d.rp=1;go('unit')},'chip')).join('')}</div>`;
+}
+function remindHow(d,name){return `<h2>要不要給自己設一個提醒？</h2><p class="lead">島上不會真的幫你設，要自己動手——現在就可以做。</p><div class="chips col">${[`我自己設鬧鐘，名稱用「${name}」`,'我截圖卡片，設成鎖定畫面','先不用'].map(x=>B(x,()=>{d.remind=x;nextStep()},'chip')).join('')}</div>`;}
+function cardHTML(c,warm){if(!c)return'';return `<div class="gcard ${warm?'warm':''}" data-flip="1"><div class="in"><div class="f"><h4>${c.title}</h4><div>${c.front}</div>${c.it?`<div class="it">${esc(c.it)}</div>`:''}<div class="tiny right" style="margin-top:8px">點一下翻面</div></div><div class="b"><h4>${c.title}・背面</h4><div>${c.back}</div>${(c.log&&c.log.length)?`<div class="it">生活紀錄：<br>${c.log.map(l=>`${l.date}　${esc(l.text)}`).join('<br>')}</div>`:''}<div class="tiny right" style="margin-top:8px">點一下翻回來</div></div></div></div>`;}
+function endCard(d,c,u){
+  if(d.fr)c.back+=`<br>你想說的一句：${esc(d.fr)}`;
+  addCard(c);S.skills[u][0]=1;S.skills[u][1]=1;S.inprogress=null;S.worse=0;if(U)U.fin=1;did(u,UNITS[u].title);
+  return `<h2>做到這裡，可以安心結束了。</h2><p class="lead">這張卡片收進貝殼袋了，技能狀態：${UNITS[u].title}・自己試過。</p>${cardHTML(c)}${KEEPNOTE}${exits()}<p class="tiny">${L('打開貝殼袋',()=>go('bag'))}　${L('回浪板小屋',()=>go('hut'))}</p>`;
+}
+
+const STORY={
+ wei_d:{name:'小威',pre:['這一週，小威的報告、打工和社團全擠在一起。','他打開報告檔案，盯著空白頁十分鐘。','腦袋裡一直重複一句：「我做不完。」'],a:'繼續算還有多少沒做',aRes:'小威列了一長串，越列越慌，還是沒動手。這很常見，前輩也是這樣過來的。',b:'先試試鬆開這句話',post:['注意：小威發現自己一直在算還剩幾件。','命名：他在心裡說：我注意到我有一個想法——我做不完。','重新聚焦：他看回螢幕，只寫第一段的標題。','做不完的感覺還在，但他動了一小步。']},
+ qing_d:{name:'阿晴',pre:['半夜兩點，阿晴滑到同學拿到交換的貼文。','胸口突然一緊，手指停不下來，又滑了三個人的頁面。','腦袋裡一直重複一句：「大家都比我好。」'],a:'繼續滑，看看大家過得怎樣',aRes:'阿晴又滑了二十分鐘，還是睡不著。這很常見，前輩也是這樣過來的。',b:'先試試鬆開這句話',post:['注意：阿晴發現自己胸口很緊，手指還在滑。','命名：她在心裡說：我注意到我有一個想法——大家都比我好。','重新聚焦：她把手機蓋在床邊，注意被子的重量和冷氣的聲音。','那句話沒有馬上消失，但它不再拉著她的手指了。']},
+ an_d:{name:'小安',pre:['明天早上小安要去實習面試，履歷打開了半小時，只改了一個字。','他一直想到：「如果這次沒上，我以後會很慘。」'],a:'繼續想沒上怎麼辦',aRes:'小安想到五年後，履歷還是沒動。這很常見。',b:'先試試鬆開這句話',post:['注意：小安發現自己肩膀很緊，腦袋已經跑到五年後。','命名：他在心裡說：我注意到我有一個想法——我以後會很慘。','重新聚焦：他看回螢幕上的履歷，只挑一行改。','擔心還在，但他帶著它把一行改完了。']},
+ qing_p:{name:'阿晴',pre:['睡前，阿晴腦袋一直重播白天說錯的一句話。','她翻來翻去，越想越清醒。'],a:'繼續想那句話',aRes:'她又想了半小時，還是睡不著。這很常見。',b:'先把根抓穩',post:['她注意到心跳有點快，腦袋停不下來。','她雙腳踩著床尾，慢慢吐了兩口氣。','她聽到冷氣的聲音，摸到被子的布。','腦袋還是有點吵，但她回到了床上，不在白天那一刻了。']},
+ wei_p:{name:'小威',pre:['小威的待辦清單長到要往下滑。','他一下開報告、一下回訊息，什麼都只做了一半。'],a:'再把清單重排一次',aRes:'他排了第三次順序，時間又過了二十分鐘。這很常見。',b:'先把根抓穩',post:['他注意到肩膀很緊，呼吸很淺。','他雙手互壓，慢慢吐兩口氣。','他看了桌上的杯子、窗外的樹、螢幕的角落。','事情沒有變少，但他能選一件先做了。']},
+ an_p:{name:'小安',pre:['面試前十分鐘，小安坐在等候區。','手心一直冒汗，腦袋一片空白。'],a:'再把自我介紹背一遍',aRes:'越背越亂，他更緊張了。這很常見。',b:'先把根抓穩',post:['他注意到心跳很快，腳一直抖。','他把雙腳平放在地上，慢慢吐氣。','他看了牆上的時鐘、隔壁的盆栽，聽到冷氣的聲音。','還是緊張，但他是坐在這裡的，不在想像的失敗裡。']}
+};
+
+STORY.wei_d.like=['盯著空白頁','一直算還剩幾件','「我做不完」那句話','都不像'];
+STORY.qing_d.like=['半夜還在滑','胸口一緊','「大家都比我好」那句話','都不像'];
+STORY.an_d.like=['檔案開著卻沒動','一直想到很久以後','「我以後會很慘」那句話','都不像'];
+STORY.qing_p.like=['腦袋一直重播','越想越清醒','都不像'];
+STORY.wei_p.like=['什麼都只做一半','清單長到要往下滑','都不像'];
+STORY.an_p.like=['手心冒汗','腦袋一片空白','都不像'];
+const UNITS={
+defuse:{title:'脫鉤',source:'參考 WHO 壓力自助指引的脫鉤步驟（注意 → 命名 → 重新聚焦）與 ACT',steps:[
+ {seg:0,r:d=>`<h2>挑一句最近常在腦袋裡的話。</h2><div class="chips col">${['我做不完','大家都比我好','我以後會很慘'].map(t=>B(t,()=>{d.t=t;nextStep()},'chip')).join('')}</div>
+   <div class="own"><input type="text" id="own" placeholder="自己寫…">${B('用這句',()=>{const v=$('#own').value.trim();if(!v)return;if(crisis(v)){$('#cb').innerHTML=crisisBox();return}d.t=v;d.own=1;nextStep()},'sm')}</div><p class="tiny">這句只留在你的手機上。</p><div id="cb"></div>`},
+ {seg:0,r:d=>`<h2>在心裡唸一次：</h2><p class="thought">${esc(d.t)}</p><p class="tiny" id="w">（停 3 秒）</p><div id="nx" class="hide row">${B('下一步',nextStep,'primary')}</div>`,m:()=>later(()=>{$('#nx').classList.remove('hide');$('#w').textContent=''},3000)},
+ {seg:0,r:d=>`<h2>再唸一次，這次前面加一句：</h2><p class="thought" id="tw"></p><div id="nx" class="hide row">${B('下一步',nextStep,'primary')}</div>`,m:d=>typewrite($('#tw'),'我注意到我有一個想法：'+d.t,()=>$('#nx').classList.remove('hide'))},
+ {seg:0,r:d=>`<p class="lead">第一次做常常沒什麼差別，沒關係。</p><h2>哪一次讀起來比較像「一個想法」，而不是「事實」？</h2><div class="chips">${['第一次','第二次','差不多'].map(x=>B(x,()=>{d.which=x;nextStep()},'chip')).join('')}</div>`},
+ {seg:0,r:d=>{S.skills.defuse[0]=1;
+   if(d.which==='差不多')return `<h2>這次沒有明顯差別，很常見。</h2><p class="big">剛剛那個動作叫「脫鉤」：在想法前面加一句「我注意到我有一個想法」，讓自己看見它是一個想法。</p><div class="row">${B('看前輩怎麼用',nextStep,'primary')}${B('先停在這裡',leaveHere,'ghost')}</div>`;
+   return `<h2>${d.which==='第二次'?'加上那句之後，比較像一個想法了。':'第一次就覺得像想法，也很好。'}</h2><p class="big">這個動作叫「脫鉤」：想法還在，但你和它中間多了一點距離。</p><div class="row">${B('看前輩怎麼用',nextStep,'primary')}</div>`}},
+ {seg:1,r:d=>{if(d.own&&!d.who)return `<h2>你那句話，比較像哪一種？</h2><div class="chips col">${[['wei_d','事情做不完'],['qing_d','和別人比較'],['an_d','擔心未來'],['wei_d','都不太像，隨便看一個例子']].map(([k,l])=>B(l,()=>{d.who=k;go('unit')},'chip')).join('')}</div>`;
+   const k=d.who||({'我做不完':'wei_d','大家都比我好':'qing_d','我以後會很慘':'an_d'}[d.t]);return storyStep(d,STORY[k]);}},
+ {seg:2,r:d=>`<h2>現在換你。那句話拉著你的力氣有多大？</h2>${slider('pl')}<div class="row">${B('繼續',()=>{d.p1=+$('#pl').value;nextStep()},'primary')}</div>`,m:()=>bindSlider('pl')},
+ {seg:2,r:d=>`<h2>注意：它現在拉著你的哪裡？</h2><div class="chips">${['胸口','肩膀','手停不下來','腦袋一直轉','說不上來'].map(x=>B(x,nextStep,'chip')).join('')}</div>`},
+ {seg:2,r:d=>`<h2>在心裡說：</h2><p class="thought" id="tw"></p><div id="nx" class="hide row">${B('下一步',nextStep,'primary')}</div>`,m:d=>typewrite($('#tw'),'我注意到我有一個想法：'+d.t,()=>$('#nx').classList.remove('hide'))},
+ {seg:2,r:d=>`<h2>它還在，但你不用抱著它。</h2>${hookHTML(d.t)}<div id="nx" class="hide row">${B('下一步',nextStep,'primary')}</div>`,m:()=>{later(()=>$('#hk').classList.add('free'),700);later(()=>$('#nx').classList.remove('hide'),2600)}},
+ {seg:2,r:d=>{if(!d.bp)return `<h2>回到眼前：雙腳踩地，感覺地板。</h2><svg class="ring" viewBox="0 0 170 170"><circle cx="85" cy="85" r="70" fill="none" stroke="#bdb5a6" stroke-width="3"/><circle class="p" cx="85" cy="85" r="70" fill="none" stroke="#e09a2e" stroke-width="6" stroke-linecap="round" transform="rotate(-90 85 85)"/></svg><div class="row">${B('跳過',()=>{d.bp=1;go('unit')},'ghost sm')}</div>`;
+   if(d.bp===1)return `<h2>看看四周，找 3 樣看得到的東西。</h2><p class="lead">每找到一樣，就點一個圈。</p>${dotsTap(d,'bs',3,()=>{d.bp=2;go('unit')})}`;
+   return `<h2>現在聽到什麼聲音？</h2><div class="row">${B('聽到了',nextStep,'primary')}${B('找不到，先跳過',nextStep,'ghost sm')}</div>`;},
+  m:d=>{if(!d.bp)later(()=>{d.bp=1;go('unit')},8200)}},
+ {seg:2,r:d=>{if(d.p2==null)return `<h2>再看一次：那句話現在拉著你的力氣有多大？</h2>${slider('pl2')}<div class="row">${B('繼續',()=>{d.p2=+$('#pl2').value;go('unit')},'primary')}</div>`;
+   S.skills.defuse[1]=1;
+   if(d.p2<d.p1)return `<h2>從 ${d.p1} 變成 ${d.p2}。</h2><p class="big">它還在，只是沒那麼用力了。記住剛剛那三步。</p><div class="row">${B('今天練到這裡，拿走卡片',skipToEnd,'primary')}${B('多留兩句（給朋友、下次提醒）',nextStep)}</div>`;
+   if(d.p2>d.p1){S.worse=1;return `<h2>好像更用力了。那就先停下這個練習。</h2><p class="lead">更不舒服是很重要的訊號，不用勉強自己做完。</p><div class="row">${B('什麼都不做，坐一下就好',()=>go('rest'),'primary')}${B('去燈塔找人',()=>go('lighthouse'))}${B('還是想繼續',nextStep,'ghost')}</div>`;}
+   return `<h2>這次沒有差別也可以。</h2><p class="lead">可以直接拿卡片結束；想的話，後面還有兩小步可以選。</p><div class="row">${B('今天練到這裡，拿走卡片',skipToEnd,'primary')}${B('多留兩句（給朋友、下次提醒）',nextStep)}${B('先停在這裡',leaveHere,'ghost')}</div>`;},m:d=>{if(d.p2==null)bindSlider('pl2')}},
+ {seg:3,r:d=>friendStep(d,{title:'如果有一個朋友也被一句話勾住，你會跟他說什麼？',presets:['先在那句話前面加上「我注意到我有一個想法」。','想法不一定是事實。','帶著它，也可以先做一小步。'],pattern:'被一句話勾住的時候，可以 ___。'})},
+ {seg:4,r:d=>{if(!d.when)return `<h2>什麼時候最容易被勾住？</h2><div class="chips">${['開始讀書或工作時','滑到別人動態時','想到未來時','睡前'].map(x=>B(x,()=>{d.when=x;go('unit')},'chip')).join('')}</div>`;
+   if(!d.rp)return `<p class="big">如果${d.when}，我就在心裡說：我注意到我有一個想法。</p>`+remindStep(d);
+   return remindHow(d,'我注意到');}},
+ {seg:5,r:d=>{if(d.when)S.ifthen={when:d.when,do:'在心裡說：我注意到我有一個想法',unit:'defuse'};
+   return endCard(d,{id:'defuse',unit:'defuse',title:'脫鉤',front:'<b>注意 → 「我注意到我有一個想法」→ 回到眼前</b><br>想法還在，但你不用抱著它。',when:d.when,do:d.when?'在心裡說：我注意到我有一個想法':undefined,it:d.when?`如果${d.when}，我就在心裡說：我注意到我有一個想法。`:'',back:'三步：注意 → 我注意到我有一個想法 → 回到眼前'},'defuse');}}
+]},
+present:{title:'回到當下',source:'參考 WHO 壓力自助指引的接地練習（注意 → 放慢、連結身體 → 重新聚焦）',steps:[
+ {seg:0,r:d=>`<h2>你現在是哪一種亂？</h2><div class="chips">${[['腦袋停不下來','qing_p'],['事情太多','wei_p'],['很緊張','an_p'],['說不上來','qing_p']].map(([l,k])=>B(l,()=>{d.k=k;nextStep()},'chip')).join('')}</div>`},
+ {seg:0,r:d=>`<h2>你的注意力現在比較在哪裡？</h2>${scale5(d,'a1',nextStep)}`},
+ {seg:0,r:d=>`<h2>先跟著做一次「站穩一分鐘」。</h2><p class="lead">叫出名字 → 長長吐氣 → 看聽摸。</p><div class="row">${B('開始',()=>startSteady({from:'unit',onDone:()=>{S.skills.present[0]=1;U.step++;go('unit')}}),'primary')}</div>`},
+ {seg:0,r:d=>{if(d.a2==null)return `<h2>再看一次：注意力現在在哪裡？</h2>${scale5(d,'a2',()=>go('unit'))}`;
+   return `<h2>${d.a2>d.a1?'注意力往眼前移了一點。':d.a2<d.a1?'往腦袋那邊跑了一點也沒關係——剛開始注意自己，常常會先發現更多雜訊。':'沒移動也很常見，第一次通常沒什麼感覺。'}</h2><div class="row">${B('下一步',nextStep,'primary')}</div>`;}},
+ {seg:1,r:d=>`<p class="big">風暴來的時候，樹不會叫風停下來。它把根抓穩，等風過去。</p><div class="row">${B('看前輩怎麼做',nextStep,'primary')}</div>`},
+ {seg:1,r:d=>storyStep(d,STORY[d.k||'qing_p'])},
+ {seg:2,r:d=>{d.ns=d.ns||[];return `<p class="tiny">自己做 1 / 4　注意</p><h2>現在有什麼在？</h2><p class="lead">可以選好幾個，也可以跳過。</p><div class="chips">${['心跳快','肩膀緊','一直想同一件事','想哭','很累','別的'].map(x=>`<button class="btn chip ${d.ns.includes(x)?'sel':''}" data-h="${h(()=>{const i=d.ns.indexOf(x);i>=0?d.ns.splice(i,1):d.ns.push(x);go('unit')})}">${x}</button>`).join('')}</div><div class="row">${B('繼續',nextStep,'primary')}${B('跳過',nextStep,'ghost sm')}</div>`;}},
+ {seg:2,r:d=>{if(!d.body)return `<p class="tiny">自己做 2 / 4　身體</p><h2>挑一個做：</h2><div class="chips">${['雙腳踩地','雙手互壓','伸展手臂'].map(x=>B(x,()=>{d.body=x;go('unit')},'chip')).join('')}</div>`;
+   return `<p class="tiny">自己做 2 / 4　身體</p><h2>${d.body}，再慢慢吐兩口氣。</h2><p class="lead">吐氣時頭暈就放慢。</p><div class="row">${B('做好了',nextStep,'primary')}</div>`;}},
+ {seg:2,r:d=>{if(!d.sp)return `<p class="tiny">自己做 3 / 4　看聽摸</p><h2>看看四周，找 5 樣看得到的東西。</h2><p class="lead">每找到一樣，就點一個圈。</p>${dotsTap(d,'s5',5,()=>{d.sp=1;go('unit')})}`;
+   if(d.sp===1)return `<p class="tiny">自己做 3 / 4　看聽摸</p><h2>聽 3 個聲音。</h2>${dotsTap(d,'h3',3,()=>{d.sp=2;go('unit')})}<div class="row">${B('找不到聲音，先跳過',()=>{d.sp=2;go('unit')},'ghost sm')}</div>`;
+   return `<p class="tiny">自己做 3 / 4　看聽摸</p><h2>摸一下身邊的東西，是什麼觸感？</h2><div class="chips">${['軟的','硬的','涼的','暖的','說不上來'].map(x=>B(x,nextStep,'chip')).join('')}</div>`;}},
+ {seg:2,r:d=>{if(!d.where)return `<p class="tiny">自己做 4 / 4　我在哪</p><h2>你在哪裡？現在在做什麼？</h2><p class="lead">在心裡回答就好。</p><div class="row">${B('想好了',()=>{d.where=1;go('unit')},'primary')}</div>`;
+   if(!d.firm)return `<h2>現在站得多穩？</h2><div class="chips">${['還在晃','有穩一點','站得住','更不舒服'].map(x=>B(x,()=>{d.firm=x;go('unit')},'chip')).join('')}</div>`;
+   if(d.firm==='更不舒服')return worseHTML();
+   S.skills.present[1]=1;
+   if(d.firm==='還在晃')return `<h2>還在晃也沒關係，這次先站到這裡就好。</h2><div class="row">${B('今天練到這裡，拿走卡片',skipToEnd,'primary')}${B('多留兩句（給朋友、下次提醒）',nextStep)}${B('先停在這裡',leaveHere,'ghost')}</div>`;
+   return `<h2>${d.firm==='站得住'?'站得住。':'有穩一點。'}風暴不一定變小，你在風裡還能站著。</h2><p class="lead">剛剛哪個動作最順手，就記住那一個。</p><div class="row">${B('今天練到這裡，拿走卡片',skipToEnd,'primary')}${B('多留兩句（給朋友、下次提醒）',nextStep)}</div>`;}},
+ {seg:3,r:d=>friendStep(d,{title:'如果有一個朋友腦袋也很亂，你會跟他說什麼？',presets:['先雙腳踩地，慢慢吐一口氣。','找 3 樣看得到的東西就好。','風暴不一定變小，你還是能站著。'],pattern:'腦袋很亂的時候，可以 ___。'})},
+ {seg:4,r:d=>{if(!d.next)return `<h2>站穩以後，你想做什麼？</h2><div class="chips">${['回去做剛剛的事','休息一下','去試脫鉤','還不知道'].map(x=>B(x,()=>{d.next=x;go('unit')},'chip')).join('')}</div>`;
+   if(!d.when)return `${d.next==='休息一下'||d.next==='還不知道'?'<p class="lead">休息也算一種下一步。</p>':''}<h2>什麼時候最需要站穩？</h2><div class="chips">${['腦袋很吵的時候','事情一多的時候','緊張的時候','睡前'].map(x=>B(x,()=>{d.when=x;go('unit')},'chip')).join('')}</div>`;
+   if(!d.rp)return `<p class="big">如果${d.when}，我就雙腳踩地、找 3 樣看得到的東西。</p>`+remindStep(d);
+   return remindHow(d,'腳踩地');}},
+ {seg:5,r:d=>{if(d.when)S.ifthen={when:d.when,do:'雙腳踩地、找 3 樣看得到的東西',unit:'present'};
+   return endCard(d,{id:'present',unit:'present',title:'回到當下',front:'<b>注意 → 腳踩地、吐氣 → 看三樣</b><br>風暴來的時候，先把根抓穩。',when:d.when,do:d.when?'雙腳踩地、找 3 樣看得到的東西':undefined,it:d.when?`如果${d.when}，我就雙腳踩地、找 3 樣看得到的東西。`:'',back:'30 秒版：注意 → 腳踩地吐氣 → 看 3 樣東西<br>平時可以練：喝水的時候，用好奇心注意溫度和味道。'},'present');}}
+]}};
+
+/* ---- 在生活中用過：回顧 ---- */
+SCR.review=a=>{
+  const c=S.cards.find(x=>x.id===a.id)||cardWithPlan()||S.cards[S.cards.length-1];
+  if(!c)return say(['袋子裡還沒有卡片。','先做一個練習，就會有第一張。'],[B('先喘口氣（1 分鐘）',()=>startSteady({from:'haven'}),'primary'),B('去地圖',()=>go('map'))]);
+  const id=c.id, plan=c.when?`如果${c.when}，就${c.do}`:null;
+  const re=(o)=>()=>go('review',Object.assign({id},a,o));
+  const done=()=>{S.reviewDue=false;};
+  if(!a.ans) return say([plan?`上次你說，${plan}。`:`上次你帶走了「${c.title}」。`,plan?'這幾天有遇到嗎？':'這幾天有用到嗎？'],[
+    B('有，也試了',re({ans:'yes'}),'primary'),B('有，但沒想起來',re({ans:'forgot'})),B('還沒遇到',re({ans:'not'})),B('先不想這個',re({ans:'skip'}))]);
+  if(a.ans==='yes'){
+    if(!a.at) return say(['哇，帶回生活是最難的那一步。','是在什麼時候？'],[...(c.when?[c.when]:[]),'讀書或工作時','睡前','和人相處的時候','別的時候'].filter((x,i,arr)=>arr.indexOf(x)===i).map(x=>B(x,re({at:x}),'chip')));
+    if(!a.how) return say([`${a.at}。`,'試了之後怎麼樣？'],['有一點用','差不多','說不上來'].map(x=>B(x,re({how:x}),'chip')));
+    if(!a.saved){c.log.push({date:today(),text:`${a.at}・${a.how}`});S.skills[c.unit][2]=1;done();a.saved=1;}
+    return say([a.how==='有一點用'?'記下來了。下次遇到，你會更快想起它。':'差不多也算數，你記得用了。','「在生活中用過」那一格亮起來了。'],[
+      B('打開貝殼袋',()=>go('bag'),'primary'),B('改一下「如果—就」',re({ans:'edit'})),B('去地圖',()=>go('map'))]);}
+  if(a.ans==='forgot'){
+    if(!a.rm) return say(['很正常，我以前也是事後才想到。想到本身就算一次。','要換一個提醒方法嗎？'],['換鬧鐘名稱','換成鎖定畫面','不用'].map(x=>B(x,re({rm:x}),'chip')));
+    if(!a.saved){c.log.push({date:today(),text:'事後才想起來'});done();a.saved=1;}
+    return say([({'不用':'好，照舊。','換鬧鐘名稱':'好，改用鬧鐘提醒。','換成鎖定畫面':'好，改用鎖定畫面提醒。'})[a.rm],'卡片先放著，下次再試試。'],[B('打開貝殼袋',()=>go('bag'),'primary'),B('改一下「如果—就」',re({ans:'edit'})),B('去地圖',()=>go('map'))]);}
+  if(a.ans==='not'){done();return say(['那卡片先放著，等它派上用場。'],[B('打開貝殼袋',()=>go('bag'),'primary'),B('去地圖',()=>go('map'))]);}
+  if(a.ans==='edit'){
+    if(!a.nw) return say(['要改成什麼時候？'],['腦袋很吵的時候','開始讀書或工作時','滑到別人動態時','睡前','緊張的時候'].map(x=>B(x,re({nw:x}),'chip')));
+    c.when=a.nw;c.do=c.do||S.lastQuick;c.it=`如果${c.when}，我就${c.do}。`;S.ifthen={when:c.when,do:c.do,unit:c.unit};
+    return say(['卡片更新了。',`如果${c.when}，就${c.do}。`],[B('打開貝殼袋',()=>go('bag'),'primary'),B('去地圖',()=>go('map'))]);}
+  done();return say(['好，那今天就隨便走走。'],[B('去地圖',()=>go('map'),'primary')]);
+};
+
+/* ---- 貝殼袋 ---- */
+SCR.bag=()=>{const st={review:'還在岸邊（展演版：模擬送審，不會真的送出）。',live:'漂出去了。'};
+  const ip=S.inprogress;
+  return `<div class="fpage">${fhead('bag','貝殼袋','你從島上帶走的東西。')}<div class="notice">展演版：卡片和瓶子只留到這次參觀結束，下一位來賓開始時會清空。正式版會存在你的匿名身分裡。</div>
+  ${!S.cards.length&&!ip?'<div class="box">袋子還是空的。在避風港或浪板小屋做完一個練習，就會有第一張卡片。</div>':''}
+  ${ip?`<div class="box"><b>繼續剛剛的練習</b><p>「${UNITS[ip.id].title}」停在「${ip.seg}」。</p>${B('接著做',()=>{S.inprogress=null;startUnit(ip.id,ip.step,ip.d)},'primary sm')}</div>`:''}
+  ${S.cards.length?`<h3>卡片 ${S.reviewDue&&S.ifthen?'<span class="tag sim">回顧到了</span>':''}</h3><div class="cards">${S.cards.map(c=>`<div>${cardHTML(c,S.skills[c.unit]&&S.skills[c.unit].every(x=>x))}<div class="row" style="margin-top:8px;gap:8px">${B('記一下在生活中用過',()=>go('review',{id:c.id}),'sm')}${L('再做一次快速版',()=>c.unit==='present'?startSteady({from:'haven'}):startUnhook())}</div>${c.log&&c.log.length?`<p class="tiny" style="margin-top:4px">生活紀錄：${c.log.map(l=>l.date+' '+esc(l.text)).join('；')}</p>`:''}</div>`).join('')}</div>`:''}
+  <h3 style="margin-top:22px">我的技能</h3><table class="t">${['present','defuse'].map(u=>`<tr><td style="width:120px">${UNITS[u].title}</td><td>${skill3(u)}</td></tr>`).join('')}</table>
+  <p class="tiny">沒亮的格子是虛線，不寫「未完成」。三格都亮時卡片邊框會變暖色。</p>
+  ${S.bottles.length?`<h3 style="margin-top:22px">我丟過的瓶子</h3>${S.bottles.map(b=>`<div class="box"><p>${esc(b.text)}</p><p class="tiny">${st[b.status]}</p></div>`).join('')}`:''}
+  ${S.kept.length?`<h3 style="margin-top:22px">撿到收起來的話</h3>${S.kept.map(b=>`<div class="box"><p>${esc(b.text)}</p><p class="tiny">——${b.name}</p></div>`).join('')}`:''}
+  <p class="tiny" style="margin-top:24px">正式版：這些存在這支手機的匿名身分裡。換手機會看不到，1 月開放帳號後可以綁在一起。</p></div>`;};
+
+/* ---- 漂流瓶海灘 ---- */
+const SEED=[{text:'最近我在學：累的時候先躺十分鐘，不算偷懶。',name:'島上的團隊'},{text:'給剛上岸的你：第一次做沒感覺很正常，我也是。',name:'島上的團隊'},{text:'今天讓我好過一點的是：下課路上那杯熱豆漿。',name:'島上的團隊'},{text:'我以前也卡過半夜一直滑手機，後來把充電線放到床尾。',name:'島上的團隊'}];
+let PICK=0;
+SCR.beach=a=>{if(!S.done.includes('beach'))S.done.push('beach');
+  if(a.mode==='pick'){const b=SEED[PICK%SEED.length];
+    return `<div class="fpage">${fhead('beach','漂流瓶海灘','撿一句話，也留一句話。')}<div class="note">${esc(b.text)}<div class="sig">——${b.name}，2026/11</div></div>
+    <div class="row">${B('收進貝殼袋',()=>{if(!S.kept.includes(b))S.kept.push(b);toast('收進貝殼袋了。')},'primary')}${B('再撿一個',()=>{PICK++;go('beach',{mode:'pick'})})}${B('也想留一句',()=>go('beach',{mode:'drop'}))}${B('今天先到這裡',()=>go('leave'),'ghost')}</div>
+    <p class="tiny" style="margin-top:16px">${L('這句話讓你不舒服？告訴守海灘的人',()=>modal(`<b>想回報的原因</b><p class="tiny">展演版：回報是模擬體驗，不會真的送出。</p><div class="chips col">${['惡意','個資','廣告','擔心寫的人的安全','其他'].map(x=>B(x,()=>{closeModal();toast('收到了。（展演版：模擬，未真的送出）')},'chip')).join('')}</div>${B('取消',closeModal,'ghost sm')}`))}</p></div>`;}
+  if(a.mode==='drop') return `<div class="fpage">${fhead('beach','丟一個瓶子','留一句話給下一個上岸的人。')}
+    <div class="chips">${['最近我在學 ___。','給剛上岸的你：___','今天讓我好過一點的是 ___。','我以前也卡過 ___，後來 ___。'].map(p=>B(p,()=>{$('#bt').value=p.replace(/___/g,'')},'chip')).join('')}</div>
+    <textarea id="bt" rows="3" placeholder="點一個句型開始，也可以自己寫"></textarea>
+    <p style="margin-top:12px">要用什麼名字簽名？</p><input type="text" id="nn" value="一位島民" style="max-width:280px"><p class="tiny">不要用真名。</p>
+    <label class="chk"><input type="checkbox" id="u18"> 我未滿 18 歲</label>
+    <p class="tiny" style="margin-top:10px"><b>瓶子是公開的：</b>審核後，別的島民會撿到。只想寫給自己的話，可以去避風港「放下一件心事」。<br>瓶子會經過審核才漂出去，可能要幾天。如果你現在很需要人，燈塔比瓶子快。<br><b>展演版：</b>這裡丟的瓶子是模擬體驗，不會真的送審，下一位來賓開始時會清空。</p><div id="cb"></div>
+    <div class="row">${B('丟出去',()=>{const v=$('#bt').value.trim();if(!v)return;
+      if(/09\d{2}-?\d{3}-?\d{3}|\S+@\S+\.\S+/.test(v)){$('#cb').innerHTML='<div class="crisis">這句話裡好像有聯絡方式，為了保護你，先拿掉再丟吧。</div>';return}
+      const cr=crisis(v);S.bottles.push({text:v,name:$('#nn').value||'一位島民',status:'review',crisis:cr});
+      did('bottle','丟一個瓶子');go('beach',{mode:'sent',cr})},'primary')}${B('先不要',()=>go('beach'),'ghost')}</div></div>`;
+  if(a.mode==='sent') return `<div class="fpage">${fhead('beach','漂流瓶海灘','')}<svg class="bottlefly go" viewBox="-45 -40 90 72"><g fill="none" stroke="#33312d" stroke-width="2.2">${IC.beach}</g></svg>
+    ${a.cr?crisisBox():''}<p class="big">瓶子在岸邊了，守海灘的人看過就會漂出去。你可以在貝殼袋看到它。</p>
+    <div class="row">${B('打開貝殼袋',()=>go('bag'))}${B('離島',()=>go('leave'),'primary')}${B('去地圖',()=>go('map'),'ghost')}</div></div>`;
+  return `<div class="fpage">${fhead('beach','漂流瓶海灘','撿一句話，也留一句話。')}
+   <div class="row" style="margin-top:30px">${B('撿一個',()=>go('beach',{mode:'pick'}),'primary huge')}${B('丟一個',()=>go('beach',{mode:'drop'}))}${B('回應一個（整修中）',()=>modal(`<p>回應的碼頭還在蓋。現在可以先留一個新的瓶子。</p><p class="tiny">1 月開放。回應會有句型：「謝謝你寫下來，我也 ___。」</p>${B('知道了',closeModal)}`),'ghost')}</div>
+   <p class="tiny" style="margin-top:20px">撿不用登入；丟瓶子會用匿名身分（自動的）。瓶子不是求救管道，需要人的時候請去燈塔。</p></div>`;};
+
+/* ---- 離島 ---- */
+SCR.leave=a=>{
+  if(a.bye) return say(['燈塔一直亮著，需要的時候抬頭就看得到。','慢慢來。'],[
+    B('想第一批試住？留下 email',()=>go('bulletin',{focus:'join'}),'primary'),B('重新上岸',()=>go('dock'),'ghost')]);
+  if(S.worse) return say(['今天就先到這裡吧，不用再多做什麼。','慢慢來。'],[B('離島',()=>go('leave',{bye:1}),'primary'),B('去燈塔找人',()=>go('lighthouse'))]);
+  if(S.ifthen){
+    if(a.edit) return say(['要改成什麼時候？'],['腦袋很吵的時候','開始讀書或工作時','滑到別人動態時','睡前','緊張的時候'].map(o=>B(o,()=>{S.ifthen.when=o;const lc=S.cards.find(c=>c.unit===S.ifthen.unit&&c.when);if(lc){lc.when=o;lc.it=`如果${o}，我就${S.ifthen.do}。`;}go('leave',{bye:1})},'chip')).concat([B('不改了，直接離島',()=>go('leave',{bye:1}),'ghost sm')]));
+    return say(['要走啦？你剛剛留的這句收在卡片上了：',`如果${S.ifthen.when}，就${S.ifthen.do}。`],[B('就這句，離島',()=>go('leave',{bye:1}),'primary'),B('改一下時機',()=>go('leave',{edit:1})),B('直接離島',()=>go('leave',{bye:1}),'ghost')]);
+  }
+  if(!S.cards.length) return say(['要走啦？今天有來逛逛，就很好了。','下次想練什麼再來，不練也可以來撿瓶子。'],[B('離島',()=>go('leave',{bye:1}),'primary'),B('再逛一下',()=>go('map'),'ghost')]);
+  const opts=['腦袋很吵的時候','滑到別人動態的時候','睡前'];
+  return scene(`<div class="bubble"><div class="who">阿潮</div><p>要走啦？</p><p>想的話，可以給下次的自己留一句。不留也沒關係。</p></div>
+   <div class="opts"><p>如果 <span id="wh" class="thought" style="font-size:1.1rem;padding:4px 12px;min-height:0">___</span> ，我就 ${esc(S.lastQuick)}。</p>
+   <div class="chips">${opts.map(o=>B(o,()=>{$('#wh').textContent=o;a.w=o},'chip')).join('')}</div>
+   <div class="row">${B('留好了',()=>{if(a.w){const u=S.lastQuickUnit||'present';const lc=S.cards.find(c=>c.unit===u);S.ifthen={when:a.w,do:S.lastQuick,unit:u};if(lc){lc.when=a.w;lc.do=S.lastQuick;lc.it=`如果${a.w}，我就${S.lastQuick}。`;}}go('leave',{bye:1})},'primary')}${B('不留，直接離島',()=>go('leave',{bye:1}))}</div>
+   <p class="tiny">不說「明天見」，也不跳通知。</p></div>`);};
+
+/* ---- 燈塔 ---- */
+SCR.lighthouse=()=>`<div class="fpage">${fhead('lighthouse','燈塔','需要人的時候，燈一直亮著。')}
+ <div class="box red"><b>如果你或身邊的人現在有危險，請直接打 119 或 110。</b></div>
+ <div class="box"><h3>想找人說話</h3><table class="t">
+  <tr><td style="width:160px"><b>1925 安心專線</b></td><td>衛福部，24 小時、免付費</td></tr>
+  <tr><td><b>1995 生命線</b></td><td>24 小時；非中華電信可能要付通話費。不想講電話，也有文字協談「謝謝你跟我說」（時間以官網公告為準）</td></tr>
+  <tr><td><b>1980 張老師</b></td><td>週一至週六 9:00–21:30、週日 9:00–17:00（中午、傍晚有休息）；中華電信免費</td></tr></table></div>
+ <div class="box"><h3>如果你是學生</h3><p>學校的諮商中心（有的叫學生輔導中心）可以免費預約。不知道怎麼開口？可以直接說：我最近壓力有點大，想約一次談話。</p></div>
+ <div class="box"><h3>守燈人</h3><p>守燈人是真人，負責看過島上有危機訊號的內容。因為島民是匿名的，守燈人沒辦法聯絡到你，所以現在就需要人的話，請用上面的電話。</p></div>
+ <p class="tiny">登大人島不是諮商或醫療服務。資料核對於 2026-11-10。</p></div>`;
+
+/* ---- 公佈欄（含留 email） ---- */
+SCR.bulletin=a=>{mount(()=>{if(a.focus==='join'){const e=$('#join');if(e)e.scrollIntoView({behavior:'smooth'})}});
+ return `<div class="fpage">${fhead('board','公佈欄','島上的規矩和最新消息')}
+ <div class="grid2"><div class="box"><h3>難過可以帶上島，惡意不行。</h3><ol><li>難過可以帶上島，不必先變好才能來。</li><li>用善意回應：不說教、不比誰比較慘、不評價別人的選擇。</li><li>分享自己的經驗，不替別人做決定。</li><li>不留個資（自己的、別人的），不推銷。</li></ol></div>
+ <div class="box"><h3>島不取代諮商</h3><p>這座島可以陪你練習照顧自己，但它不是諮商、醫療、法律或稅務服務。內容還沒經過心理專業審閱。需要專業幫忙的時候，燈塔有可以聯絡的地方。</p><h3>最新消息</h3><p>11/21：島第一次對外開放參觀。</p></div></div>
+ <div class="box"><h3>隱私說明</h3><table class="t"><tr><th>存什麼</th><th>不存什麼</th></tr><tr><td>你的貝殼袋：卡片、技能狀態、「如果—就」</td><td>練習裡打的那句話</td></tr><tr><td>你選擇丟出去的瓶子</td><td>「放下一件心事」的內容</td></tr><tr><td>你填的回饋卡</td><td>你的名字、學校、電話</td></tr><tr><td>匿名使用紀錄：去了哪個設施、做到第幾步</td><td>你打的任何內容</td></tr></table>
+ <p class="tiny">如果你留了 email，它和上面的資料分開存、不會連在一起，只用來寄試用邀請，隨時可以退出。</p></div>
+ <div class="box" id="join" style="border-color:var(--lamp);border-width:2px"><h3>想當第一批試住的島民？</h3><p>留下 email，有新版本時我們會寄邀請給你。</p>
+  ${a.sent?`<p class="big">記下了，謝謝你。</p><p class="tiny">（展演版：還沒接資料庫，11/14 接上。目前這台裝置記了 ${S.emails.length} 筆。）</p>${B('換下一位填',()=>go('bulletin',{focus:'join'}),'sm')}`:
+  `<p class="tiny">展演版：email 先記在這台裝置，還沒接資料庫（11/14 接上），不會馬上收到信。</p><input type="text" id="em" placeholder="you@example.com" style="max-width:380px"><div class="chips">${['想當測試者','想一起做','可以提供專業意見'].map(x=>`<label class="chk" style="margin-right:14px"><input type="checkbox" class="ro" value="${x}"> ${x}</label>`).join('')}</div>
+   <div class="row">${B('留下 email',()=>{const v=$('#em').value.trim();if(!/\S+@\S+\.\S+/.test(v)){toast('email 格式好像不太對');return}S.emails.push({email:v,roles:[...document.querySelectorAll('.ro:checked')].map(x=>x.value)});go('bulletin',{sent:1,focus:'join'})},'primary')}</div>`}</div></div>`;};
+
+/* ---- 生活街／茶屋／工地 ---- */
+SCR.street=()=>`<div class="fpage">${fhead('street','生活街','前輩怎麼自己生活。')}<div class="chips">${['租房','自己生活','交通','稅務與錢','工作與打工'].map(x=>`<span class="tag plan">${x}・工地</span>`).join('')}</div>
+ <div class="box"><p>這裡還在蓋，之後會開放。</p><p class="tiny">之後會有：第一批 3 篇生活指南（例：第一次自己租房：看房前要問的事）。每篇都有「10 分鐘內的第一步」和官方連結。</p></div>
+ <div class="row">${B('開放時想知道 → 公佈欄',()=>go('bulletin',{focus:'join'}))}${B('回地圖',()=>go('map'),'ghost')}</div></div>`;
+SCR.tea=()=>`<div class="fpage">${fhead('tea','前輩茶屋','前輩留下的經驗。')}<div class="box"><p>茶屋還在整修。想當第一批來說故事的前輩？在公佈欄留下 email。</p><p class="tiny">之後會有：前輩經驗投稿（那時候的我／卡在哪／我試過什麼／現在回頭看／給你的一句話），練習頁可以連過來：「前輩也遇過 →」。</p></div>
+ <div class="row">${B('去公佈欄',()=>go('bulletin',{focus:'join'}))}${B('回地圖',()=>go('map'),'ghost')}</div></div>`;
+SCR.site=()=>`<div class="fpage">${fhead('site','工地','整修中，之後會開放')}<div class="box"><p>這裡還在蓋，之後會開放。</p><p class="tiny">之後會有：善待自己、依價值行動、為情緒留空間三個練習；漂流瓶回應；島民共創內容。</p></div>
+ <div class="row">${B('開放時想知道 → 公佈欄',()=>go('bulletin',{focus:'join'}))}${B('回地圖',()=>go('map'),'ghost')}</div></div>`;
+
+/* ============ 流程總覽 ============ */
+const ST=[
+ {n:1,nm:'上岸',ic:'dock',fac:'碼頭・阿潮',st:'run',what:'阿潮依 6 種情境問「我猜你現在想……」，把人帶到對的設施。',time:'20 秒',
+  scr:[['第一次上岸（情境 A）',()=>goWalk('dock',{sit:'A'})],['深夜上岸（情境 C）',()=>goWalk('dock',{sit:'C'})],['說不上來（情境 B）',()=>goWalk('dock',{sit:'B'})]]},
+ {n:2,nm:'看地圖',ic:'island',fac:'全島地圖・阿潮導覽',st:'run',what:'10 個設施各一行說明，開著的點燈、還在蓋的畫虛線；第一次來可以跟阿潮導覽 7 站。',time:'30 秒–1 分',
+  scr:[['全島地圖',()=>goWalk('map')],['阿潮導覽（7 站）',()=>{TOUR=0;goWalk('tour')}]]},
+ {n:3,nm:'做一件事',ic:'hut',fac:'避風港・浪板小屋',st:'run',what:'很亂時進避風港直接跟著做；有力氣時去浪板小屋練完整單元。每頁都能「現在做不到」或「先到這裡」。',time:'1–10 分',
+  scr:[['避風港・站穩一分鐘',()=>{setView('walk',true);startSteady({from:'haven'})}],['避風港・鬆開一句話',()=>{setView('walk',true);startUnhook()}],['避風港・放下一件心事',()=>goWalk('letgo')],['浪板小屋',()=>goWalk('hut')],['完整單元：回到當下',()=>{setView('walk',true);startUnit('present',0)}],['完整單元：脫鉤',()=>{setView('walk',true);startUnit('defuse',0)}]]},
+ {n:4,nm:'收進貝殼袋',ic:'bag',fac:'貝殼袋',st:'run',what:'做完的練習變成卡片，技能三格只寫狀態：認識了／自己試過／在生活中用過。',time:'10 秒',
+  scr:[['打開貝殼袋',()=>goWalk('bag')]]},
+ {n:5,nm:'留一句話',ic:'beach',fac:'漂流瓶海灘',st:'run',what:'撿一句島民留下的話，或丟一句給下一個人（經審核才漂出去）。練習裡的「給朋友一句話」也可以選擇流到這裡。',time:'1 分',
+  scr:[['撿一個',()=>goWalk('beach',{mode:'pick'})],['丟一個',()=>goWalk('beach',{mode:'drop'})]]},
+ {n:6,nm:'離島',ic:'dock',fac:'碼頭',st:'run',what:'留一句「如果—就」給下次的自己，阿潮送別；不說明天見、不跳通知。展場在這裡接「留 email」。',time:'20 秒',
+  scr:[['離島',()=>goWalk('leave')],['留 email（公佈欄）',()=>goWalk('bulletin',{focus:'join'})]]},
+ {n:7,nm:'回來',ic:'back',fac:'碼頭情境 D／E／F・貝殼袋',st:'sim',what:'3 天後回來，阿潮問「這幾天有遇到嗎？」；練習做到一半的人可以接著做。展場用「展演控制」模擬。',time:'示範用',
+  scr:[['模擬：3 天後回顧（情境 E）',()=>{S.reviewDue=true;if(!S.ifthen)S.ifthen={when:'腦袋很吵的時候',do:'雙腳踩地、找 3 樣看得到的東西',unit:'present'};goWalk('dock',{sit:'E'})}],['模擬：回來的人（情境 D）',()=>goWalk('dock',{sit:'D'})],['模擬：做到一半（情境 F）',()=>{if(!S.inprogress)S.inprogress={id:'defuse',step:6,seg:'自己做一次'};goWalk('dock',{sit:'F'})}]]},
+ {n:8,nm:'成為前輩',ic:'senior',fac:'漂流瓶回應・前輩茶屋',st:'plan',what:'練過的人把經驗留給下一個人：回應瓶子（1 月）、到前輩茶屋投稿（工地）。島上的內容慢慢由島民一起長出來。',time:'之後',
+  scr:[['前輩茶屋（工地）',()=>goWalk('tea')],['漂流瓶海灘',()=>goWalk('beach')]]}
+];
+let OVSEL=2;
+function goWalk(name,arg){setView('walk',true);go(name,arg);}
+function thumb(k){return `<svg viewBox="-60 -42 120 84"><path d="M-56 34 h112" stroke="#bdb5a6" stroke-width="1.5" stroke-dasharray="4 5"/><g fill="none" stroke="#33312d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" filter="url(#pencil)">${IC[k]}</g></svg>`;}
+function renderOverview(){
+  H={};timers.forEach(clearTimeout);timers=[];
+  const s=ST[OVSEL];
+  $('#stage').innerHTML=`<div class="ovhead"><div><div class="tiny">展演骨架 v0.4・2026/11/11</div><h1>登大人島的主旅程</h1><p class="lead">一個慢慢長大的地方。來賓在攤位上走第 1–6 站（約 3–5 分鐘），第 7–8 站用模擬和圖說明。</p></div>
+   <div class="legend">${tag('run')}${tag('sim')}${tag('plan')}</div></div>
+   <div class="flow">${ST.map((x,i)=>`<div class="st ${x.st==='plan'?'plan':''} ${i===OVSEL?'sel':''}" data-h="${h(()=>{OVSEL=i;renderOverview()})}"><div class="no">第 ${x.n} 站</div><div class="nm">${x.nm}</div>${thumb(x.ic)}<div class="fc">${x.fac}</div>${tag(x.st)}</div>`).join('')}</div>
+   <div class="bracket"><div style="grid-column:1/7">展場體驗路線：來賓自己操作</div><div class="sim" style="grid-column:7/9">模擬示範＋圖說</div></div>
+   <div class="detail">
+    <div class="box"><div class="tiny">第 ${s.n} 站・${s.fac}・${s.time}</div><h3 style="font-size:1.5rem">${s.nm}</h3><p class="big">${s.what}</p><p>${tag(s.st)}</p></div>
+    <div class="box"><h3>這一站的畫面</h3><div class="scrlist">${s.scr.map(([l,f])=>B(l+' →',f)).join('')}</div></div>
+   </div>
+   <div class="box" style="margin-top:18px"><h3>全島 10 個設施</h3><div class="facgrid">${Object.entries(FAC).map(([k,f])=>`<div class="fi" style="cursor:pointer" data-h="${h(()=>goWalk(f.to))}"><b>${f.n}</b>${f.line}<div style="margin-top:4px">${tag(f.st)}</div></div>`).join('')}</div>
+    <p class="tiny" style="margin-top:10px">全島共用：每頁右上「需要人」連到燈塔；練習每頁都有「現在做不到」（只做 8 秒版／先到這裡／去燈塔）和「先到這裡」（停在哪裡會記著）。</p></div>
+   <div class="box"><h3>建議的攤位快速路線（約 3 分鐘）</h3><div class="route"><span class="s">碼頭：先喘口氣</span>→<span class="s">避風港：站穩一分鐘</span>→<span class="s">卡片收進貝殼袋</span>→<span class="s">海灘撿一個瓶子</span>→<span class="s">離島</span>→<span class="s">留 email</span></div>
+    <div class="row">${B('從碼頭開始走 →',()=>{goWalk('dock',{sit:'A'})},'primary')}</div></div>`;
+}
+
+/* ============ 展演控制 ============ */
+function renderDemo(){
+  const dp=$('#dp');if(!dp)return;
+  dp.innerHTML=`<b>碼頭情境</b><div class="chips">${['A','B','C','D','E','F'].map(x=>`<button class="btn ${S.forceSit===x?'primary':''}" data-h="${h(()=>{S.forceSit=S.forceSit===x?null:x;if(x==='E'||x==='D')S.returned=true;if(x==='E'){S.reviewDue=true;if(!S.ifthen)S.ifthen={when:'腦袋很吵的時候',do:'雙腳踩地、找 3 樣看得到的東西',unit:'present'}}if(x==='F'&&!S.inprogress)S.inprogress={id:'defuse',step:6,seg:'自己做一次'};go('dock',{sit:x})})}">${x}</button>`).join('')}</div>
+   <div class="tiny">A 第一次・B 說不上來・C 深夜・D 回來的人・E 3 天後回顧・F 做到一半</div>
+   <div class="row" style="margin-top:4px">${B('模擬過幾天回來',()=>{S.returned=true;S.reviewDue=true;S.greetOff=false;S.forceSit=null;$('#demo').open=false;go('map')})}</div>
+   <div class="row" style="margin-top:4px">${B('重新開始（下一位來賓）',()=>{const em=S.emails;S=fresh();S.emails=em;U=null;$('#demo').open=false;go('map')},'primary')}</div>
+   <div class="tiny">已收 email：${S.emails.length} 筆（展演版只存在這個分頁）</div>`;
+}
+
+/* ============ 切換檢視 ============ */
+function setView(v,silent){
+  VIEW=v;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.view===v));
+  $('#hw').style.display=v==='walk'?'':'none';$('#demo').style.display=v==='walk'?'':'none';
+  if(location.hash!=='#'+v){try{history.replaceState(null,'','#'+v)}catch(e){location.hash=v}}
+  if(!silent){v==='overview'?renderOverview():go('dock');}
+}
+setView('walk',true);go('map');
+</script>
+</body>
+</html>
