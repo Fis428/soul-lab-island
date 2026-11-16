@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>登大人島｜留句話給我們</title>
+<meta name="description" content="謝謝你來登大人島！留下你的感覺，或一起參與。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='9' fill='%23F2C230' stroke='%231E4F7A' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1E4F7A; --ink-soft:#4F7699; --lamp:#F2C230; --lamp-soft:#FBEFC4;
+    --paper:#FFFFFF; --line:#C9D6E2; --muted:#5E7184; --err:#B4442F;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:#F4F1EA}
+  body{font-family:"Noto Sans TC",system-ui,sans-serif;color:var(--ink);line-height:1.7;-webkit-text-size-adjust:100%}
+  .wrap{max-width:480px;margin:0 auto;background:var(--paper);min-height:100vh;padding:0 22px 48px;position:relative}
+  .proto{font-size:12px;color:var(--muted);background:#F4F1EA;margin:0 -22px;padding:6px 22px;text-align:center}
+  h1,h2,.hand{font-family:"LXGW WenKai TC",serif;font-weight:700}
+  header{padding:28px 0 8px}
+  .title{display:flex;align-items:center;gap:12px}
+  .title h1{font-size:28px;margin:0;letter-spacing:.08em}
+  .agou{display:flex;gap:12px;align-items:flex-start;margin-top:18px}
+  .bubble{border:1.5px solid var(--ink);border-radius:4px 16px 16px 16px;padding:12px 14px;font-size:15px;position:relative;background:#fff}
+  .bubble b{font-family:"LXGW WenKai TC",serif}
+  .time{display:inline-block;margin-top:6px;font-size:13px;color:var(--ink);background:var(--lamp-soft);padding:0 8px;border-radius:2px}
+  section{padding:26px 0 6px;border-top:1.5px dashed var(--line);margin-top:22px}
+  section:first-of-type{border-top:none}
+  .step{font-family:"LXGW WenKai TC",serif;font-size:14px;color:var(--ink-soft)}
+  h2{font-size:21px;margin:2px 0 14px;line-height:1.45}
+  .q{margin-bottom:22px}
+  .q p{margin:0 0 10px;font-weight:500}
+  .opts{display:flex;gap:8px;flex-wrap:wrap}
+  .opt input{position:absolute;opacity:0;pointer-events:none}
+  .opt span{display:block;padding:10px 16px;border:1.5px solid var(--ink);border-radius:6px;font-size:15px;cursor:pointer;min-width:84px;text-align:center;background:#fff;transition:background .12s}
+  .opt input:checked + span{background:var(--ink);color:#fff}
+  .opt input:focus-visible + span{outline:3px solid var(--lamp);outline-offset:2px}
+  .join{display:flex;flex-direction:column;gap:10px}
+  .join label{display:flex;gap:12px;align-items:flex-start;border:1.5px solid var(--line);border-radius:8px;padding:12px 14px;cursor:pointer;background:#fff}
+  .join label:has(input:checked){border-color:var(--ink);background:var(--lamp-soft)}
+  .join input{width:20px;height:20px;margin:3px 0 0;accent-color:var(--ink);flex:none}
+  .join strong{display:block;font-size:16px}
+  .join small{display:block;color:var(--muted);font-size:13.5px;line-height:1.55}
+  .hint{font-size:13.5px;color:var(--muted);margin:10px 0 0}
+  #contact{display:none}
+  #contact.show{display:block}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-weight:500;font-size:15px;margin-bottom:6px}
+  .field label em{font-style:normal;font-size:12.5px;color:var(--muted);font-weight:400;margin-left:6px}
+  .field label em.req{color:var(--err)}
+  input[type=text],input[type=email],textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);border:1.5px solid var(--line);border-radius:6px;padding:10px 12px;background:#fff}
+  input:focus,textarea:focus{outline:none;border-color:var(--ink)}
+  textarea{min-height:76px;resize:vertical}
+  .consent{border:1.5px solid var(--ink);border-radius:8px;padding:14px 16px;margin-top:6px}
+  .consent ul{margin:6px 0 12px;padding-left:20px;font-size:14.5px}
+  .consent li{margin-bottom:4px}
+  .consent .agree{display:flex;gap:10px;align-items:flex-start;font-weight:500;cursor:pointer}
+  .consent .agree input{width:20px;height:20px;margin:3px 0 0;accent-color:var(--ink);flex:none}
+  .err{color:var(--err);font-size:13.5px;margin-top:6px;display:none}
+  .err.show{display:block}
+  .submit{margin-top:28px}
+  button{font:inherit;cursor:pointer}
+  .btn{width:100%;font-family:"LXGW WenKai TC",serif;font-weight:700;font-size:19px;letter-spacing:.1em;padding:14px;border-radius:8px;border:2px solid var(--ink);background:var(--lamp);color:var(--ink)}
+  .btn:active{transform:translateY(1px)}
+  .btn[disabled]{opacity:.6}
+  .small-note{text-align:center;font-size:13px;color:var(--muted);margin-top:10px}
+  /* thanks */
+  #thanks{display:none;padding-top:28px}
+  #thanks.show{display:block}
+  .thanks-head{text-align:center;padding:10px 0 4px}
+  .thanks-head h1{font-size:28px;margin:10px 0 4px}
+  .thanks-head p{margin:0;color:var(--ink-soft)}
+  .need{list-style:none;padding:0;margin:0}
+  .need li{display:flex;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line)}
+  .need li:last-child{border-bottom:none}
+  .need .dot{flex:none;width:28px;height:28px;border-radius:50%;background:var(--lamp-soft);border:1.5px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:"LXGW WenKai TC",serif;font-weight:700;font-size:14px;margin-top:2px}
+  .need strong{display:block;font-size:16px}
+  .need span{font-size:14px;color:var(--muted)}
+  .box{border:1.5px solid var(--ink);border-radius:8px;padding:14px 16px;margin-top:14px;display:flex;gap:14px;align-items:center}
+  .box p{margin:0;font-size:15px}
+  .ig{font-family:"LXGW WenKai TC",serif;font-weight:700;font-size:18px}
+  .restart{display:block;margin:30px auto 0;background:none;border:none;color:var(--muted);text-decoration:underline;font-size:13px}
+  .lamp-glow{filter:drop-shadow(0 0 6px rgba(242,194,48,.7))}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ========== 表單 ========== -->
+  <form id="form" novalidate>
+    <header>
+      <div class="title">
+        <svg width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
+          <path d="M4 34c6-3 10-3 16 0s10 3 16 0 6-2 6-2" fill="none" stroke="#1E4F7A" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M10 33c2-9 8-15 15-15s11 6 12 13" fill="#FBEFC4" stroke="#1E4F7A" stroke-width="1.8" stroke-linejoin="round"/>
+          <rect x="26" y="8" width="5" height="13" fill="#fff" stroke="#1E4F7A" stroke-width="1.6"/>
+          <circle cx="28.5" cy="7" r="2.6" fill="#F2C230" stroke="#1E4F7A" stroke-width="1.4" class="lamp-glow"/>
+        </svg>
+        <h1>登大人島</h1>
+      </div>
+
+      <div class="agou">
+        <svg width="54" height="62" viewBox="0 0 54 62" aria-label="阿狗" style="flex:none">
+          <path d="M40 53c5-1 8-5 7-10" fill="none" stroke="#1E4F7A" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M12 60c1-12 7-19 15-19s14 7 15 19" fill="#fff" stroke="#1E4F7A" stroke-width="1.6"/>
+          <circle cx="27" cy="25" r="12" fill="#fff" stroke="#1E4F7A" stroke-width="1.6"/>
+          <path d="M18 16C10 15 6 24 8 33c1 4 6 4 8-1 1-3 2-9 4-13z" fill="#FBEFC4" stroke="#1E4F7A" stroke-width="1.6" stroke-linejoin="round"/>
+          <path d="M36 16c8-1 12 8 10 17-1 4-6 4-8-1-1-3-2-9-4-13z" fill="#FBEFC4" stroke="#1E4F7A" stroke-width="1.6" stroke-linejoin="round"/>
+          <circle cx="23" cy="24" r="1.3" fill="#1E4F7A"/><circle cx="31" cy="24" r="1.3" fill="#1E4F7A"/>
+          <ellipse cx="27" cy="28.4" rx="2.3" ry="1.6" fill="#1E4F7A"/>
+          <path d="M27 30v1.4M24 31.6c1.2 1.5 2.4 1.5 3 0 .6 1.5 1.8 1.5 3 0" fill="none" stroke="#1E4F7A" stroke-width="1.3" stroke-linecap="round"/>
+          <path d="M20.5 21.5l2-1M33.5 21.5l-2-1" stroke="#1E4F7A" stroke-width="1.1" stroke-linecap="round"/>
+        </svg>
+        <div class="bubble">
+          謝謝你來登大人島！我是登大人島的發起人<b>阿狗</b>。<br>
+          點兩題讓我知道你的感覺；想一起參與的話，再往下留聯絡方式。
+          <div><span class="time">大約 30 秒～1 分鐘</span></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- 1 回饋 -->
+    <section>
+      <div class="step">一・兩個小問題</div>
+      <h2>先告訴我們你的感覺</h2>
+
+      <div class="q" id="q1">
+        <p>你看懂登大人島在做什麼嗎？</p>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="understand" value="看懂"><span>看懂</span></label>
+          <label class="opt"><input type="radio" name="understand" value="大概懂"><span>大概懂</span></label>
+          <label class="opt"><input type="radio" name="understand" value="不太懂"><span>不太懂</span></label>
+        </div>
+      </div>
+
+      <div class="q" id="q2">
+        <p>如果是 18–25 歲的你，會想用嗎？</p>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="wouldUse" value="會"><span>會</span></label>
+          <label class="opt"><input type="radio" name="wouldUse" value="也許"><span>也許</span></label>
+          <label class="opt"><input type="radio" name="wouldUse" value="不會"><span>不會</span></label>
+        </div>
+      </div>
+      <div class="err" id="errQ">這兩題點一下就好，幫我們很多。</div>
+    </section>
+
+    <!-- 2 參與 -->
+    <section>
+      <div class="step">二・選填</div>
+      <h2>想繼續參與嗎？</h2>
+      <div class="join">
+        <label><input type="checkbox" name="join" value="tester">
+          <div><strong>當第一批試用島民</strong><small>小島預計 2027 年 1 月上線，先寄邀請給你上島試用，告訴我們哪裡不好用。</small></div></label>
+        <label><input type="checkbox" name="join" value="builder">
+          <div><strong>一起蓋島</strong><small>設計、程式、內容寫作、社群經營……你會的都可以。</small></div></label>
+        <label><input type="checkbox" name="join" value="professional">
+          <div><strong>給心理專業意見</strong><small>諮商、臨床、社工、輔導相關背景，幫我們看內容和練習方法。</small></div></label>
+        <label><input type="checkbox" name="join" value="resource">
+          <div><strong>介紹資源</strong><small>資金、比賽、場地、可以合作的單位或人。</small></div></label>
+      </div>
+      <p class="hint">都不勾也沒關係，直接按最下面的送出就好。</p>
+    </section>
+
+    <!-- 3 聯絡（有勾才出現） -->
+    <section id="contact" aria-live="polite">
+      <div class="step">三・怎麼聯絡你</div>
+      <h2>留個聯絡方式，展後阿狗會寫信給你</h2>
+
+      <div class="field">
+        <label for="name">怎麼稱呼你<em>選填</em></label>
+        <input type="text" id="name" autocomplete="nickname" placeholder="名字或暱稱">
+      </div>
+      <div class="field">
+        <label for="email">Email<em class="req">必填</em></label>
+        <input type="email" id="email" autocomplete="email" inputmode="email" placeholder="you@example.com">
+        <div class="err" id="errEmail">請填一個收得到信的 email。</div>
+      </div>
+      <div class="field">
+        <label for="social">IG 或 LINE<em>選填</em></label>
+        <input type="text" id="social" placeholder="@帳號 或 LINE ID">
+      </div>
+      <div class="field">
+        <label for="about">你的專業背景，或能幫忙的事<em>選填</em></label>
+        <textarea id="about" placeholder="例如：諮商所研究生／會做插畫／認識某個青年創業比賽"></textarea>
+      </div>
+
+      <div class="consent">
+        <strong class="hand" style="font-size:17px">你的資料會這樣用</strong>
+        <ul>
+          <li>只用來聯絡你參與登大人島，不會拿去做別的事，也不會給別人。</li>
+          <li>想退出隨時回信說一聲，我們就把你的資料刪掉。</li>
+          <li>聯絡資料和上面兩題的回答分開存：我們只看得到「幾個人看懂、幾個人想用」，不會知道是誰回答了什麼。</li>
+        </ul>
+        <label class="agree"><input type="checkbox" id="agree"><span>我了解，同意用這個方式聯絡我</span></label>
+        <div class="err" id="errAgree">要留聯絡方式的話，請先勾選同意。</div>
+      </div>
+    </section>
+
+    <div class="submit">
+      <button type="submit" class="btn" id="submitBtn">送出</button>
+      <div class="err" id="errSend" role="alert"></div>
+      <p class="small-note">送出就完成了，也可以把名片投進桌上的郵箱。</p>
+    </div>
+  </form>
+
+  <!-- ========== 感謝頁 ========== -->
+  <div id="thanks" aria-live="polite">
+    <div class="thanks-head">
+      <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true">
+        <rect x="27" y="18" width="10" height="34" fill="#fff" stroke="#1E4F7A" stroke-width="2"/>
+        <path d="M27 30h10M27 42h10" stroke="#1E4F7A" stroke-width="1.6"/>
+        <path d="M24 18h16l-3-6H27z" fill="#fff" stroke="#1E4F7A" stroke-width="2" stroke-linejoin="round"/>
+        <circle cx="32" cy="9" r="4" fill="#F2C230" stroke="#1E4F7A" stroke-width="1.6" class="lamp-glow"/>
+        <path d="M8 56c8-3 14-3 24 0s16 3 24 0" fill="none" stroke="#1E4F7A" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <h1>收到了，謝謝你！</h1>
+      <p id="thanksMsg">你的感覺我們會好好看。</p>
+    </div>
+
+    <section>
+      <div class="step">我們在找什麼</div>
+      <h2>小島還在蓋，現在最需要這些</h2>
+      <ul class="need">
+        <li><div class="dot">1</div><div><strong>心理專業的夥伴</strong><span>幫我們審內容、確認練習方法安全又合適。</span></div></li>
+        <li><div class="dot">2</div><div><strong>資金與合作單位</strong><span>讓小島撐到上線，之後也能持續運作。</span></div></li>
+        <li><div class="dot">3</div><div><strong>一起蓋島的人</strong><span>設計、程式、內容寫作、社群經營。</span></div></li>
+        <li><div class="dot">4</div><div><strong>第一批島民</strong><span>18–25 歲、願意試用並老實說哪裡不好用。</span></div></li>
+      </ul>
+      <p class="hint">認識適合的人或單位？把這頁分享給他，或直接跟阿狗聊。</p>
+    </section>
+
+    <section>
+      <div class="step">之後去哪找我們</div>
+      <div class="box">
+        <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="3" y="3" width="28" height="28" rx="8" fill="none" stroke="#1E4F7A" stroke-width="2"/><circle cx="17" cy="17" r="6.5" fill="none" stroke="#1E4F7A" stroke-width="2"/><circle cx="25" cy="9" r="1.6" fill="#1E4F7A"/></svg>
+        <div><p>Instagram</p><p class="ig">@（待補）</p></div>
+      </div>
+      <div class="box">
+        <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><path d="M5 14h24v15H5z" fill="#FBEFC4" stroke="#1E4F7A" stroke-width="2" stroke-linejoin="round"/><path d="M5 14c0-5 4-9 12-9s12 4 12 9" fill="none" stroke="#1E4F7A" stroke-width="2"/><path d="M12 19h10" stroke="#1E4F7A" stroke-width="2.4" stroke-linecap="round"/></svg>
+        <p>有名片的話，也可以投進桌上的<b>郵箱</b>，阿狗會一張一張看。</p>
+      </div>
+    </section>
+
+    <button class="restart" type="button" id="restart" hidden>（展場用）回到開頭，給下一位來賓</button>
+  </div>
+</div>
+
+<script>
+/* ====== 設定：接上 Supabase 後填這兩行 ====== */
+const SUPABASE_URL = '';       // 例：https://abcdefgh.supabase.co
+const SUPABASE_ANON_KEY = '';  // Project Settings → API → anon public key（可以公開）
+/* ========================================= */
+
+(function(){
+  const form = document.getElementById('form');
+  const contact = document.getElementById('contact');
+  const joins = [...document.querySelectorAll('input[name="join"]')];
+  const btn = document.getElementById('submitBtn');
+  const errSend = document.getElementById('errSend');
+  const show = (el, on) => el.classList.toggle('show', on);
+  const val = n => (form.querySelector('input[name="'+n+'"]:checked')||{}).value || null;
+
+  // 入口來源：?from=nfc / qr / web / kiosk
+  const params = new URLSearchParams(location.search);
+  const source = (params.get('from') || 'direct').slice(0, 20);
+  if (source === 'kiosk') document.getElementById('restart').hidden = false;
+
+  const wantsContact = () => joins.some(j => j.checked);
+  joins.forEach(j => j.addEventListener('change', () => show(contact, wantsContact())));
+
+  async function insert(table, row){
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) throw new Error('not-configured');
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 12000);
+    try {
+      const res = await fetch(SUPABASE_URL + '/rest/v1/' + table, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify(row),
+        signal: ctrl.signal
+      });
+      if (!res.ok) throw new Error('http-' + res.status);
+    } finally { clearTimeout(t); }
+  }
+
+  let feedbackSent = false, contactSent = false;
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    show(errSend, false);
+    let ok = true, firstBad = null;
+
+    const q1 = val('understand'), q2 = val('wouldUse');
+    const qBad = !q1 || !q2;
+    show(document.getElementById('errQ'), qBad);
+    if (qBad){ ok = false; firstBad = firstBad || document.getElementById('q1'); }
+
+    let contactRow = null;
+    if (wantsContact()){
+      const email = document.getElementById('email').value.trim();
+      const emailBad = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 200;
+      show(document.getElementById('errEmail'), emailBad);
+      if (emailBad){ ok = false; firstBad = firstBad || document.getElementById('email'); }
+
+      const agree = document.getElementById('agree').checked;
+      show(document.getElementById('errAgree'), !agree);
+      if (!agree){ ok = false; firstBad = firstBad || document.getElementById('agree'); }
+
+      const cut = (id, n) => (document.getElementById(id).value.trim().slice(0, n) || null);
+      contactRow = {
+        interests: joins.filter(j=>j.checked).map(j=>j.value),
+        name: cut('name', 60),
+        email,
+        social: cut('social', 100),
+        about: cut('about', 500),
+        consent: true,
+        source
+      };
+    }
+    if (!ok){ firstBad.scrollIntoView({behavior:'smooth', block:'center'}); return; }
+
+    btn.disabled = true; btn.textContent = '送出中…';
+    try {
+      // 兩筆分開送，彼此不帶對方的資訊：匿名回饋連不到聯絡人
+      if (!feedbackSent){ await insert('feedback', { understand:q1, would_use:q2, source }); feedbackSent = true; }
+      if (contactRow && !contactSent){ await insert('contacts', contactRow); contactSent = true; }
+    } catch(err){
+      console.warn(err);
+      errSend.textContent = '網路好像不太穩，還沒送出去。再按一次送出試試；不行的話，把名片投進桌上的郵箱也可以。';
+      show(errSend, true);
+      btn.disabled = false; btn.textContent = '再送一次';
+      return;
+    }
+
+    document.getElementById('thanksMsg').textContent = contactRow
+      ? '展後阿狗會寄信到 ' + contactRow.email + '，記得留意信箱。'
+      : '你的感覺我們會好好看。';
+    form.style.display = 'none';
+    show(document.getElementById('thanks'), true);
+    window.scrollTo({top:0});
+  });
+
+  document.getElementById('restart').addEventListener('click', () => {
+    form.reset();
+    feedbackSent = contactSent = false;
+    btn.disabled = false; btn.textContent = '送出';
+    show(contact, false);
+    document.querySelectorAll('.err').forEach(e => show(e,false));
+    show(document.getElementById('thanks'), false);
+    form.style.display = '';
+    window.scrollTo({top:0});
+  });
+})();
+</script>
+</body>
+</html>
