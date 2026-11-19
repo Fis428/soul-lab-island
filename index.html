@@ -810,8 +810,8 @@ SCR.bulletin=a=>{mount(()=>{if(a.focus==='join'){const e=$('#join');if(e)e.scrol
  <div class="box"><h3>隱私說明</h3><table class="t"><tr><th>存什麼</th><th>不存什麼</th></tr><tr><td>你的貝殼袋：卡片、技能狀態、「如果—就」</td><td>練習裡打的那句話</td></tr><tr><td>你選擇丟出去的瓶子</td><td>「放下一件心事」的內容</td></tr><tr><td>你填的回饋卡</td><td>你的名字、學校、電話</td></tr><tr><td>匿名使用紀錄：去了哪個設施、做到第幾步</td><td>你打的任何內容</td></tr></table>
  <p class="tiny">如果你留了聯絡方式，它和上面的資料分開存、不會連在一起，只用來聯絡你，隨時可以退出。</p></div>
  <div class="box" id="join" style="border-color:var(--lamp);border-width:2px"><h3>想當第一批試住的島民？</h3><p>留下聯絡方式，有新版本時我們會寄邀請給你。也可以一起蓋島、給專業意見或介紹資源。</p>
-  <div class="row"><a class="btn primary" href="https://fis428.github.io/soul-lab-island/feedback/?from=web" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">留下聯絡方式</a></div>
-  <p class="tiny">會在新分頁打開。也可以用手機感應小島模型，或掃旁邊的 QR 碼。</p></div></div>`;};
+  <div class="row">${B('留下聯絡方式',()=>{location.href='https://fis428.github.io/soul-lab-island/feedback/?from=web'},'primary')}</div>
+  <p class="tiny">也可以用自己的手機感應小島模型，或掃旁邊的 QR 碼。</p></div></div>`;};
 
 /* ---- 生活街／茶屋／工地 ---- */
 SCR.street=()=>`<div class="fpage">${fhead('street','生活街','前輩怎麼自己生活。')}<div class="chips">${['租房','自己生活','交通','稅務與錢','工作與打工'].map(x=>`<span class="tag plan">${x}・工地</span>`).join('')}</div>
