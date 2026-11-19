@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>脫鉤練習</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
+<style>
+/* Layout: one calm card per screen; a sticky header carries the way home and the progress line. */
+:root{
+  --bg:#eef2f1; --surface:#ffffff; --ink:#1b2928; --muted:#5a6b68; --line:#d3dcda;
+  --accent:#2c6b63; --accent-ink:#ffffff; --soft:#dfece9; --hook:#c2643f; --focus:#2c6b63;
+  --display:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --r:16px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111716; --surface:#192221; --ink:#e4ecea; --muted:#9caca9; --line:#2b3836;
+  --accent:#71c2b6; --accent-ink:#0d1716; --soft:#1e3330; --hook:#e08a63; --focus:#71c2b6; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111716; --surface:#192221; --ink:#e4ecea; --muted:#9caca9; --line:#2b3836;
+  --accent:#71c2b6; --accent-ink:#0d1716; --soft:#1e3330; --hook:#e08a63; --focus:#71c2b6; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.7;margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 40px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+[hidden]{display:none!important}
+.wrap{max-width:540px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px 8px;display:flex;flex-direction:column;gap:10px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:32px}
+.home-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:4px 12px 4px 8px;font-size:14px}
+.home-btn svg{width:16px;height:16px}
+.bar .name{font-family:var(--display);font-size:16px;letter-spacing:.06em}
+.bar .flow{font-size:12.5px;color:var(--muted)}
+.track{display:flex;flex-direction:column;gap:6px}
+.segs{display:flex;gap:5px}
+.seg{flex:1;height:5px;border-radius:5px;background:var(--line);overflow:hidden}
+.seg i{display:block;height:100%;width:0;background:var(--accent);border-radius:5px;transition:width .45s ease}
+.labels{display:flex;justify-content:space-between;gap:6px;font-size:12px;color:var(--muted)}
+.labels span{flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.labels span.now{color:var(--ink);font-weight:700}
+.labels b{font-variant-numeric:tabular-nums;color:var(--accent);font-weight:700;margin-left:4px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:26px 20px 22px;display:flex;flex-direction:column;gap:18px;min-width:0;min-height:360px}
+.home .card{min-height:0}
+h1,h2{font-family:var(--display);font-weight:700;margin:0;text-wrap:balance;line-height:1.45}
+h1{font-size:44px;letter-spacing:.08em;line-height:1.2}
+h2{font-size:22px}
+p{margin:0} .muted{color:var(--muted)} .small{font-size:14px}
+.stack{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grow{flex:1}
+button{font:inherit;cursor:pointer;color:inherit}
+.btn{border:0;border-radius:999px;padding:12px 24px;background:var(--accent);color:var(--accent-ink);font-weight:500;font-size:16px}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
+.linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;padding:6px 2px;font-size:14px}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+[tabindex="-1"]:focus{outline:none}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:13px 16px;transition:background .2s,border-color .2s}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--soft);font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 15px;font-size:15px}
+.chip[aria-pressed="true"]{border-color:var(--accent);background:var(--soft);font-weight:500}
+input[type=text],textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px}
+textarea{min-height:90px;resize:vertical}
+.quote{font-family:var(--display);font-size:21px;line-height:1.6;padding:16px 18px;border-radius:14px;background:var(--soft);word-break:break-word}
+.quote .pre{color:var(--accent)}
+.caret::after{content:"";display:inline-block;width:2px;height:1em;background:var(--accent);margin-left:2px;vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.note{border-left:3px solid var(--accent);padding:2px 0 2px 12px}
+.big{font-family:var(--display);font-size:20px;line-height:1.6}
+.s3{display:grid;grid-template-columns:36px 1fr;gap:12px;align-items:start}
+.s3 .n{width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:700}
+.s3 b{font-size:17px} .s3 em{font-style:normal;color:var(--muted);font-size:15px;display:block}
+.scale{display:grid;grid-template-columns:repeat(11,1fr);gap:4px}
+.scale button{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:9px 0;font-size:14px;font-variant-numeric:tabular-nums}
+.scale button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.scale-ends{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted)}
+/* reveal */
+.rv{opacity:0;transform:translateY(8px);transition:opacity .6s ease,transform .6s ease;visibility:hidden}
+.rv.in{opacity:1;transform:none;visibility:visible}
+.tap{font-size:12.5px;color:var(--muted);text-align:center;transition:opacity .3s}
+/* guided refocus */
+.ring{width:150px;height:150px;margin:6px auto;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .lbl{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-size:30px;color:var(--accent);font-variant-numeric:tabular-nums}
+.dots{display:flex;justify-content:center;gap:16px}
+.dotbtn{width:64px;height:64px;border-radius:50%;border:2px dashed var(--accent);background:transparent;color:var(--accent);font-weight:700;font-size:18px;transition:background .25s,transform .25s}
+.dotbtn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-style:solid;transform:scale(1.06)}
+/* hook illustration */
+.hookart{width:100%;max-width:320px;margin:0 auto;display:block}
+.hookart .bubble{transition:transform 1.2s cubic-bezier(.3,.7,.2,1)}
+.hookart.free .bubble{transform:translate(96px,-46px)}
+.hookart .swing{transform-origin:40px 0;animation:swing 3.6s ease-in-out infinite}
+@keyframes swing{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+/* card + tree */
+.hookcard{border:1.5px dashed var(--accent);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:4px}
+.hookcard .k{font-size:12px;letter-spacing:.14em;color:var(--muted)}
+.hookcard .v{font-family:var(--display);font-size:19px;margin-bottom:8px}
+.tree{display:flex;gap:8px;flex-wrap:wrap}
+.node{display:flex;align-items:center;gap:6px;font-size:14px;border:1px solid var(--line);border-radius:999px;padding:5px 12px;color:var(--muted);transition:all .4s}
+.node .dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--line);transition:all .4s}
+.node.done{color:var(--ink);border-color:var(--accent)} .node.done .dot{background:var(--accent);border-color:var(--accent)}
+/* home */
+.entry{display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:center;text-align:left;width:100%;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:16px 18px;transition:border-color .2s,transform .2s}
+.entry:hover{border-color:var(--accent)}
+.entry b{font-size:18px} .entry .t{font-size:13px;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+.entry .d{grid-column:1/-1;font-size:14px;color:var(--muted)}
+.entry.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.entry.primary .t,.entry.primary .d{color:var(--accent-ink);opacity:.85}
+details{font-size:14px;color:var(--muted)}
+details summary{cursor:pointer;padding:4px 0}
+details p{margin-top:6px}
+pre.out{white-space:pre-wrap;word-break:break-word;font-family:var(--body);font-size:14px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px;margin:0;max-height:320px;overflow:auto;user-select:all}
+footer.help{font-size:13px;color:var(--muted);text-align:center}
+.helpbox{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:14px;display:flex;flex-direction:column;gap:6px;text-align:left;margin-top:6px}
+.tel{font-size:20px;font-weight:700;color:var(--ink);user-select:all}
+.enter{animation:enter .35s ease both}
+@keyframes enter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.enter,.hookart .swing{animation:none}.rv,.hookart .bubble,.seg i{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="bar">
+      <button class="home-btn" id="homeBtn" type="button" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>入口</button>
+      <span class="name" id="brand">脫鉤練習</span>
+      <span class="flow" id="flowName"></span>
+    </div>
+    <div class="track" id="track" hidden><div class="segs" id="segs"></div><div class="labels" id="labels"></div></div>
+  </header>
+  <main id="screen" class="card enter" aria-live="polite"></main>
+  <footer class="help">
+    <button class="linkbtn" id="helpBtn" type="button" aria-expanded="false">現在真的很難受？</button>
+    <div class="helpbox" id="helpBox" hidden>
+      <p>這個練習不是治療。現在很難受的話，可以打：</p>
+      <p><span class="tel">1925</span>　衛福部安心專線，24 小時、免付費</p>
+      <p>有立即危險，請撥 <span class="tel">119</span> 或 <span class="tel">110</span>。</p>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+/* ---------------- state ---------------- */
+const S={thought:"",feel1:"",storyChoice:"",pullBefore:null,body:[],nameStyle:"我注意到",nameLabel:"",
+  nextThing:"",pullAfter:null,advice:"",shareAdvice:false,ifWhen:"",ifCustom:"",thenDo:"",
+  exitedAt:"",usedSmaller:false,fb:{},code:"",fu:{},quickDone:false};
+const T={start:null,stage:{},curKey:null,curStart:Date.now()};
+let pos={flow:"home",i:0}, hist=[], resume=null, cleanups=[];
+const store={get(k){try{return JSON.parse(localStorage.getItem("unhook:"+k))}catch(e){return null}},set(k,v){try{localStorage.setItem("unhook:"+k,JSON.stringify(v))}catch(e){}}};
+const skill=Object.assign({learned:false,tried:false,used:false},store.get("skill")||{});
+S.code=store.get("code")||"";
+
+const $=s=>document.querySelector(s);
+const el=(tag,attrs={},...kids)=>{const e=document.createElement(tag);for(const k in attrs){const v=attrs[k];if(k==="on")for(const ev in v)e.addEventListener(ev,v[ev]);else if(k==="class")e.className=v;else if(k==="text")e.textContent=v;else if(v!==false&&v!=null)e.setAttribute(k,v)}kids.flat().forEach(c=>{if(c==null||c===false)return;e.append(c.nodeType?c:document.createTextNode(c))});return e};
+const P=(t,c)=>el("p",{class:c||""},t);
+const H=t=>el("h2",{text:t});
+const later=(fn,ms)=>{const id=setTimeout(fn,ms);cleanups.push(()=>clearTimeout(id));return id};
+const every=(fn,ms)=>{const id=setInterval(fn,ms);cleanups.push(()=>clearInterval(id));return id};
+const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const thought=()=>S.thought.trim()||"（你心裡那句話）";
+const quote=(...k)=>el("div",{class:"quote"},...k);
+
+/* reveal: items appear one by one; tap the card to bring the next one now */
+function reveal(items,{gap=1400,first=350,onDone}={}){
+  items.forEach(it=>it.el.classList.add("rv"));
+  let n=0,timer=null,done=false;
+  const hint=el("p",{class:"tap",text:"點一下畫面，下一句會馬上出來"});
+  function step(){
+    if(done)return;
+    const it=items[n++]; it.el.classList.add("in"); it.on&&it.on();
+    if(n>=items.length){done=true;hint.style.opacity="0";onDone&&later(onDone,it.after??250);return}
+    timer=later(step,items[n-1].hold??gap);
+  }
+  const card=$("#screen");
+  const tap=e=>{if(done||e.target.closest("button,input,textarea,label,a"))return;clearTimeout(timer);step()};
+  card.addEventListener("click",tap);cleanups.push(()=>card.removeEventListener("click",tap));
+  later(step,first);
+  return hint;
+}
+function typeInto(node,text,speed=75,onEnd){
+  node.textContent="";node.classList.add("caret");let i=0;
+  if(RM){node.textContent=text;node.classList.remove("caret");onEnd&&onEnd();return}
+  const id=every(()=>{node.textContent=text.slice(0,++i);if(i>=text.length){clearInterval(id);later(()=>node.classList.remove("caret"),600);onEnd&&onEnd()}},speed);
+}
+
+/* ---------------- building blocks ---------------- */
+function nextBtn(label="下一步",{needs,to,hidden}={}){
+  const b=el("button",{class:"btn",type:"button","data-next":"1"},label);
+  b.addEventListener("click",()=>{if(needs&&!needs())return;to?to():next()});
+  b._needs=needs; if(needs&&!needs())b.disabled=true; if(hidden)b.hidden=true;
+  return b;
+}
+function navRow(btn,{exit=true,back=true}={}){
+  const left=el("div",{class:"row"});
+  if(back&&hist.length&&hist[hist.length-1].flow===pos.flow)left.append(el("button",{class:"linkbtn",type:"button",on:{click:goBack}},"上一步"));
+  if(exit)left.append(el("button",{class:"linkbtn",type:"button",on:{click:()=>{S.exitedAt=curScreen().id;goSpecial("smaller")}}},"先到這裡"));
+  return el("div",{class:"nav"},left,btn||el("span"));
+}
+function refreshNext(){const b=$("#screen [data-next]");if(b&&b._needs)b.disabled=!b._needs()}
+function opts(obj,key,list,{auto=false,after,labels}={}){
+  const w=el("div",{class:"stack",role:"group"});
+  list.forEach(v=>{const b=el("button",{class:"opt",type:"button","aria-pressed":String(obj[key]===v)},(labels&&labels[v])||v);
+    b.addEventListener("click",()=>{obj[key]=v;w.querySelectorAll(".opt").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));after&&after(v);refreshNext();if(auto)later(()=>next(),420)});w.append(b)});
+  return w;
+}
+function chips(list,{multi=false,get,set}){
+  const w=el("div",{class:"chips",role:"group"});
+  const sync=()=>w.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",String(get().includes(x.dataset.v))));
+  list.forEach(v=>{const b=el("button",{class:"chip",type:"button","data-v":v},v);b.addEventListener("click",()=>{set(v);sync();refreshNext()});w.append(b)});
+  w._sync=sync;sync();return w;
+}
+function scale(key,{auto=true,after}={}){
+  const w=el("div",{class:"stack"}),row=el("div",{class:"scale",role:"group","aria-label":"0 到 10"});
+  for(let i=0;i<=10;i++){const b=el("button",{type:"button","aria-pressed":String(S[key]===i)},String(i));
+    b.addEventListener("click",()=>{S[key]=i;row.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));refreshNext();after&&after();if(auto)later(()=>next(),450)});row.append(b)}
+  w.append(row,el("div",{class:"scale-ends"},el("span",{text:"0 沒感覺"}),el("span",{text:"10 整個被拉走"})));return w;
+}
+function textIn(id,obj,key,ph,{area=false,max=80}={}){
+  const i=el(area?"textarea":"input",{id,type:area?false:"text",maxlength:String(max),placeholder:ph});i.value=obj[key]||"";
+  i.addEventListener("input",()=>{obj[key]=i.value;refreshNext()});return i;
+}
+function step3(n,title,desc){return el("div",{class:"s3"},el("span",{class:"n",text:n}),el("div",{},el("b",{text:title}),el("em",{text:desc})))}
+function node(t,done){return el("span",{class:"node"+(done?" done":"")},el("span",{class:"dot"}),t)}
+function hookArt(){
+  const ns="http://www.w3.org/2000/svg",svg=document.createElementNS(ns,"svg");
+  svg.setAttribute("viewBox","0 0 320 136");svg.setAttribute("class","hookart");svg.setAttribute("role","img");svg.setAttribute("aria-label","一句話掛在魚鉤上，鬆開後飄走");
+  svg.innerHTML='<g class="swing"><line x1="40" y1="0" x2="40" y2="20" style="stroke:var(--muted)" stroke-width="2"/><path d="M40 20 V70 a24 24 0 0 0 48 0 V62" fill="none" style="stroke:var(--hook)" stroke-width="4" stroke-linecap="round"/><path d="M88 62 l-8 9" style="stroke:var(--hook)" stroke-width="4" stroke-linecap="round"/></g><g class="bubble"><rect x="62" y="82" width="150" height="40" rx="20" style="fill:var(--soft);stroke:var(--accent)" stroke-width="1.5"/><text x="137" y="107" text-anchor="middle" font-size="15" style="fill:var(--ink);font-family:var(--body)">我一定寫不完</text></g>';
+  return svg;
+}
+
+/* ---------------- flows ---------------- */
+const STAGES={full:["試一下","看示範","自己做","說給人聽","帶回生活"],quick:["想一句話","叫出來","回到眼前"],fb:["回饋"],fu:["回顧"]};
+const FLOWNAME={full:"完整練習",quick:"快速版",fb:"回饋",fu:"3 天後回顧"};
+const SAMPLE=["我是不是又搞砸了","來不及了","我不夠好","大家應該覺得我很煩"];
+
+function scrThink(stage){return {id:"think",stage,render(){
+  const inp=textIn("thought",S,"thought","或自己打一句（可不填）",{max:60});
+  const ch=chips(SAMPLE,{get:()=>[S.thought],set:v=>{S.thought=v;inp.value=v}});
+  inp.addEventListener("input",()=>ch._sync());
+  return [H("想一句最近常在腦中轉的話"),P("不嚴重也可以。打下來，或只在心裡想。","muted"),ch,inp,navRow(nextBtn("想好了"))];
+}}}
+function scrPrefix(stage,quick){return {id:quick?"q-prefix":"prefix",stage,render(){
+  const typed=el("span",{class:"pre"}),rest=el("span",{});
+  const q2=quote(typed,rest);
+  const ask=el("div",{class:"stack"},el("p",{class:"big",text:"感覺有不一樣嗎？"}),
+    opts(S,"feel1",["更黏了","差不多","有一點距離","很不一樣"],{auto:true}));
+  const btn=quick?nextBtn("下一步",{hidden:true}):null;
+  const items=[
+    {el:P("先照平常那樣，讀一次。","big")},
+    {el:quote(thought()),hold:2600},
+    {el:P("再讀一次。這次前面加上幾個字：","big")},
+    {el:q2,on:()=>typeInto(typed,"我注意到我有一個想法：",80,()=>{rest.textContent=thought()}),hold:3600},
+    {el:quick?P("慢慢在心裡說一次。這樣就是在「叫它出來」。","muted"):ask,on:()=>{if(btn)later(()=>btn.hidden=false,900)}}
+  ];
+  const hint=reveal(items,{gap:1500});
+  return [...items.map(x=>x.el),hint,navRow(btn)];
+}}}
+function scrRefocus(stage,id){return {id,stage,render(){
+  // three guided beats: feet (8s ring) → see 3 things → hear 1 sound
+  const box=el("div",{class:"stack"}),btn=nextBtn("回來了",{hidden:true});
+  const title=H("把注意力帶回你在的地方");
+  function feet(){
+    box.textContent="";
+    const C=2*Math.PI*64,ns="http://www.w3.org/2000/svg";
+    const ring=el("div",{class:"ring"});const svg=document.createElementNS(ns,"svg");svg.setAttribute("viewBox","0 0 150 150");
+    svg.innerHTML=`<circle cx="75" cy="75" r="64" fill="none" style="stroke:var(--line)" stroke-width="8"/><circle id="arc" cx="75" cy="75" r="64" fill="none" style="stroke:var(--accent);transition:stroke-dashoffset 1s linear" stroke-width="8" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C}"/>`;
+    const lbl=el("div",{class:"lbl",text:"8"});ring.append(svg,lbl);
+    box.append(el("p",{class:"big",text:"腳踩地。感覺腳底，和身體靠著的地方。"}),ring,
+      el("button",{class:"linkbtn",type:"button",style:"align-self:center",on:{click:()=>{clearInterval(t);see()}}},"跳過"));
+    let s=8;const arc=svg.querySelector("#arc");
+    later(()=>arc.style.strokeDashoffset=String(C*(1-1/8)),50);
+    const t=every(()=>{s--;lbl.textContent=String(Math.max(s,0));arc.style.strokeDashoffset=String(C*(1-(8-s+1)/8));if(s<=0){clearInterval(t);later(see,600)}},1000);
+  }
+  function taps(text,count,done){
+    box.textContent="";let got=0;
+    const dots=el("div",{class:"dots"});
+    for(let i=1;i<=count;i++){const b=el("button",{class:"dotbtn",type:"button","aria-pressed":"false","aria-label":"找到第 "+i+" 個"},String(i));
+      b.addEventListener("click",()=>{if(b.getAttribute("aria-pressed")==="true")return;b.setAttribute("aria-pressed","true");if(++got>=count)later(done,700)});dots.append(b)}
+    box.append(el("p",{class:"big",text}),dots,P("找到一個，就點一下。","muted small"));
+  }
+  function see(){taps("找出你現在看得到的 3 樣東西。",3,hear)}
+  function hear(){taps("再聽一個聲音。",1,end)}
+  function end(){box.textContent="";const m=P("回來了。","big");box.append(m);btn.hidden=false;btn.focus()}
+  later(feet,300);
+  return [title,box,navRow(btn)];
+}}}
+
+const FULL=[
+ scrThink(0),
+ scrPrefix(0,false),
+ {id:"name-it",stage:0,render(){
+   const art=hookArt();
+   const items=[
+     {el:H("剛剛那個，叫做「脫鉤」"),hold:1200},
+     {el:art,on:()=>later(()=>art.classList.add("free"),900),hold:2400},
+     {el:P("一句話鉤住你時，人還在原地，注意力卻被拉走。","big")},
+     {el:P("脫鉤不是趕走它，是不讓它決定你接下來做什麼。","big"),after:300}
+   ];
+   const btn=nextBtn("看個例子",{hidden:true});
+   const hint=reveal(items,{gap:2200,onDone:()=>btn.hidden=false});
+   skill.learned=true;store.set("skill",skill);
+   return [...items.map(x=>x.el),hint,navRow(btn)];
+ }},
+ {id:"story",stage:1,render(){
+   const ask=el("div",{class:"stack"},el("p",{class:"big",text:"換作是你，通常會？"}),
+     opts(S,"storyChoice",["跟它吵","把它推開","照它說的做","都有吧"],{auto:true,labels:{"跟它吵":"跟它吵：「我才不會寫不完！」","把它推開":"把它推開：先滑手機再說","照它說的做":"照它說的做：反正寫不完，不寫了","都有吧":"都有吧"}}));
+   const items=[
+     {el:P("小威，大三。","big muted")},
+     {el:P("晚上十點，報告明天交，檔案裡只有標題。","big")},
+     {el:quote("「我一定寫不完。」"),hold:1800},
+     {el:P("胸口一緊，他拿起手機。","big")},
+     {el:ask}
+   ];
+   const hint=reveal(items,{gap:1600});
+   return [...items.map(x=>x.el),hint,navRow(null)];
+ }},
+ {id:"result",stage:1,render(){
+   const R={"跟它吵":"越吵，它越大聲。整晚都在辯論，報告還停在標題。","把它推開":"滑了一小時，暫時不難受。回來時，時間更少，那句話更像真的。","照它說的做":"關掉電腦，鬆了一口氣。隔天更焦慮。","都有吧":"很正常。這些都讓人暫時好過，也常把人拉離真正想做的事。"};
+   const btn=nextBtn("看第四種",{hidden:true});
+   const items=[{el:el("p",{class:"note big",text:R[S.storyChoice]||R["都有吧"]}),hold:2600},{el:P("沒有對錯。這次，小威試了第四種。","big")}];
+   const hint=reveal(items,{onDone:()=>btn.hidden=false});
+   return [H("可能會這樣"),...items.map(x=>x.el),hint,navRow(btn)];
+ }},
+ {id:"three",stage:1,render(){
+   const btn=nextBtn("下一步",{hidden:true});
+   const items=[
+     {el:step3("1","注意到","「欸，我又被鉤住了。」"),hold:2000},
+     {el:step3("2","叫出來","「我注意到我有一個想法：我一定寫不完。」"),hold:2600},
+     {el:step3("3","回到眼前","腳踩穩，看著空白的第一段，先打一句。")}
+   ];
+   const hint=reveal(items,{onDone:()=>btn.hidden=false});
+   return [H("脫鉤三步"),...items.map(x=>x.el),hint,navRow(btn)];
+ }},
+ {id:"thousand",stage:1,render(){
+   const btn=nextBtn("換你",{hidden:true});
+   const items=[
+     {el:P("那晚，那句話又出現了五、六次。","big")},
+     {el:P("每一次，他就再脫一次。","big"),hold:1800},
+     {el:el("p",{class:"note",text:"WHO 的指引說：我們可能要脫鉤一千次。"}),hold:1800},
+     {el:P("被鉤住不是失敗。再脫一次就好。","big")}
+   ];
+   const hint=reveal(items,{onDone:()=>btn.hidden=false});
+   return [...items.map(x=>x.el),hint,navRow(btn)];
+ }},
+ {id:"pull-before",stage:2,render(){
+   return [H("那句話現在拉著你多大力？"),quote(thought()),scale("pullBefore"),navRow(null)];
+ }},
+ {id:"body",stage:2,render(){
+   return [H("它在身體哪裡？"),P("可以選不只一個。","muted"),
+     chips(["胸口","肩膀","脖子","胃","頭","手","說不上來"],{multi:true,get:()=>S.body,set:v=>{const i=S.body.indexOf(v);i<0?S.body.push(v):S.body.splice(i,1)}}),
+     navRow(nextBtn("下一步"))];
+ }},
+ {id:"call-out",stage:2,render(){
+   const label=textIn("nameLabel",S,"nameLabel","例如：寫不完、來不及",{max:16});
+   const lw=el("div",{},label);
+   const pv=quote();
+   const paint=()=>{pv.textContent="";
+     if(S.nameStyle==="取名")pv.append(el("span",{class:"pre"},"「"+(S.nameLabel.trim()||"＿＿")+"劇場」又來了。"));
+     else pv.append(el("span",{class:"pre"},"我注意到我有一個想法："),thought());
+     lw.hidden=S.nameStyle!=="取名"};
+   label.addEventListener("input",paint);
+   const g=opts(S,"nameStyle",["我注意到","取名"],{after:paint,labels:{"我注意到":"「我注意到我有一個想法……」","取名":"幫它取名：「＿＿劇場」又來了"}});
+   paint();
+   return [H("在心裡叫它出來"),g,lw,pv,P("慢慢說一次。","muted"),navRow(nextBtn("說好了"))];
+ }},
+ scrRefocus(2,"refocus"),
+ {id:"small-thing",stage:2,render(){
+   const inp=textIn("nextThing",S,"nextThing","或自己寫（可不填）",{max:40});
+   const ch=chips(["先寫一句","喝口水","回一則訊息","站起來伸展"],{get:()=>[S.nextThing],set:v=>{S.nextThing=v;inp.value=v}});
+   inp.addEventListener("input",()=>ch._sync());
+   return [H("接下來，做哪一件小事？"),ch,inp,navRow(nextBtn("下一步"))];
+ }},
+ {id:"pull-after",stage:2,render(){
+   const msg=P("數字沒變也沒關係。脫鉤是讓你帶著它，也能做事。","muted");msg.classList.add("rv");
+   const btn=nextBtn("下一步",{hidden:true});
+   return [H("再看一次，現在拉力多大？"),quote(thought()),
+     scale("pullAfter",{auto:false,after:()=>{msg.classList.add("in");btn.hidden=false;skill.tried=true;store.set("skill",skill)}}),msg,navRow(btn)];
+ }},
+ {id:"teach",stage:3,render(){
+   const ta=textIn("advice",S,"advice","例如：被一句話卡住時，先在前面加「我注意到」。",{area:true,max:120});
+   const share=el("input",{type:"checkbox",id:"shareAdvice"});share.checked=S.shareAdvice;share.addEventListener("change",()=>S.shareAdvice=share.checked);
+   return [H("學弟妹也被一句話卡住，你會怎麼教他？"),P("一句話就好。","muted"),ta,
+     el("label",{class:"row small",for:"shareAdvice"},share,"願意放進回饋卡給我們參考"),
+     navRow(nextBtn("下一步"))];
+ }},
+ {id:"if",stage:4,render(){
+   const custom=textIn("ifCustom",S,"ifCustom","或自己寫一個時刻",{max:40});
+   const ok=()=>!!(S.ifWhen&&(S.ifWhen!=="自己寫"||S.ifCustom.trim()));
+   const ch=chips(["開始讀書或工作","睡前躺在床上","滑到別人的動態","被念之後"],{get:()=>[S.ifWhen],set:v=>{S.ifWhen=v;S.ifCustom="";custom.value=""}});
+   custom.addEventListener("input",()=>{S.ifWhen=custom.value.trim()?"自己寫":"";ch._sync();refreshNext()});
+   return [H("那句話，最常在什麼時候出現？"),ch,custom,navRow(nextBtn("下一步",{needs:ok}))];
+ }},
+ {id:"then",stage:4,render(){
+   if(!S.thenDo)S.thenDo="說「我注意到我有一個想法」，再做眼前一件小事";
+   const inp=textIn("thenDo",S,"thenDo","",{max:60});
+   const ch=chips(["說「我注意到我有一個想法」，再做眼前一件小事","幫它取名，然後腳踩地","找 3 樣看得到的東西"],{get:()=>[S.thenDo],set:v=>{S.thenDo=v;inp.value=v}});
+   inp.addEventListener("input",()=>ch._sync());
+   return [H("那時候，你要做什麼？"),ch,inp,navRow(nextBtn("做成我的脫鉤卡",{needs:()=>!!S.thenDo.trim()}))];
+ }},
+ {id:"card",stage:4,render(){
+   const when=S.ifWhen==="自己寫"?S.ifCustom.trim():S.ifWhen;
+   const n1=node("認識了",skill.learned),n2=node("自己試過",skill.tried),n3=node("在生活中用過",skill.used);
+   const tree=el("div",{class:"stack"},el("p",{class:"small muted",text:"你的情緒肌肉：脫鉤"}),el("div",{class:"tree"},n1,n2,n3));
+   const btn=nextBtn("給回饋（1 分鐘）",{hidden:true,to:()=>startFlow("fb")});
+   const items=[
+     {el:el("div",{class:"hookcard"},el("div",{class:"k",text:"如果"}),el("div",{class:"v",text:when}),el("div",{class:"k",text:"我就"}),el("div",{class:"v",text:S.thenDo})),hold:2200},
+     {el:P("截圖存起來。3 天後，邀請你的人會問你：有想起來嗎？","small")},
+     {el:tree}
+   ];
+   const hint=reveal(items,{onDone:()=>btn.hidden=false});
+   return [H("你的脫鉤卡"),...items.map(x=>x.el),hint,navRow(btn,{exit:false})];
+ }}
+];
+
+const QUICK=[
+ scrThink(0),
+ scrPrefix(1,true),
+ scrRefocus(2,"q-refocus"),
+ {id:"q-end",stage:2,render(){
+   S.quickDone=true;skill.learned=true;store.set("skill",skill);
+   const items=[{el:P("這樣就夠了。","big")},{el:P("那句話可能還在，沒關係。想學完整的三步，可以回入口做完整練習。","muted")}];
+   const hint=reveal(items,{gap:1200});
+   return [H("鬆開一點了"),...items.map(x=>x.el),hint,
+     el("div",{class:"nav"},el("button",{class:"linkbtn",type:"button",on:{click:()=>startFlow("fb")}},"給個回饋"),el("button",{class:"btn",type:"button",on:{click:goHome}},"回入口"))];
+ }}
+];
+
+const FB=[
+ {id:"fb-stuck",stage:0,render(){return [H("哪一步最卡，或最想跳過？"),opts(S.fb,"stuck",STAGES.full.concat(["都還好"]),{auto:true}),navRow(null,{exit:false})]}},
+ {id:"fb-unclear",stage:0,render(){return [H("有沒有哪裡看不懂，或要用猜的？"),textIn("unclear",S.fb,"unclear","可不填",{area:true,max:300}),navRow(nextBtn("下一步"),{exit:false})]}},
+ {id:"fb-effect",stage:0,render(){return [H("做完後，面對一直轉的想法，你覺得："),opts(S.fb,"effect",["比較知道怎麼辦","差不多","更混亂了"],{auto:true}),navRow(null,{exit:false})]}},
+ {id:"fb-pace",stage:0,render(){return [H("文字一句一句出來的速度？"),opts(S.fb,"pace",["太慢，想快點","剛好","太快，來不及讀"],{auto:true}),navRow(null,{exit:false})]}},
+ {id:"fb-length",stage:0,render(){return [H("整體長度？"),opts(S.fb,"length",["太長","剛好","太短"],{auto:true}),navRow(null,{exit:false})]}},
+ {id:"fb-teach",stage:0,render(){return [H("「說給人聽」那一步感覺？"),opts(S.fb,"teachFeel",["很自然","有點怪","很尷尬","沒做到這步"],{auto:true}),navRow(null,{exit:false})]}},
+ {id:"fb-will",stage:0,render(){return [H("接下來 3 天，會想起來用嗎？"),opts(S.fb,"willUse",["會","可能","不會"],{auto:true}),navRow(null,{exit:false})]}},
+ {id:"fb-last",stage:0,render(){
+   const code=textIn("code",S,"code","例如綽號，讓邀請你的人認得你",{max:20});
+   code.addEventListener("input",()=>store.set("code",S.code));
+   return [H("最後"),el("label",{class:"small",for:"other"},"還有想說的嗎？"),textIn("other",S.fb,"other","可不填",{area:true,max:300}),
+     el("label",{class:"small",for:"code"},"你的代號"),code,navRow(nextBtn("產生回饋卡"),{exit:false})];
+ }},
+ {id:"fb-card",stage:0,render(){return summaryView("【脫鉤練習｜測試回饋】",buildSummary())}}
+];
+
+const FU=[
+ {id:"fu-code",stage:0,render(){return [H("嗨，3 天過去了"),P("沒想起來、沒用，也都是很有用的答案。","muted"),el("label",{class:"small",for:"fuCode"},"你的代號"),(()=>{const c=textIn("fuCode",S,"code","你上次填的代號",{max:20});c.addEventListener("input",()=>store.set("code",S.code));return c})(),navRow(nextBtn("開始"),{exit:false})]}},
+ {id:"fu-remember",stage:0,render(){return [H("這幾天，有想起脫鉤嗎？"),opts(S.fu,"remember",["有，而且用了","有想起來，但沒用","沒有想起來"],{auto:true,after:v=>{if(v==="有，而且用了"){skill.used=true;store.set("skill",skill)}}}),navRow(null,{exit:false})]}},
+ {id:"fu-when",stage:0,skip:()=>S.fu.remember!=="有，而且用了",render(){return [H("是什麼時候用的？"),textIn("fuWhen",S.fu,"when","例如：星期二晚上寫報告",{area:true,max:300}),navRow(nextBtn("下一步"),{exit:false})]}},
+ {id:"fu-helped",stage:0,skip:()=>S.fu.remember!=="有，而且用了",render(){return [H("用了之後？"),opts(S.fu,"helped",["有幫助","普通","沒幫助"],{auto:true}),navRow(null,{exit:false})]}},
+ {id:"fu-why",stage:0,skip:()=>S.fu.remember==="有，而且用了",render(){return [H("最主要的原因是？"),opts(S.fu,"why",["忘了","這幾天沒遇到","想起來但不想用","試了覺得沒效","其他"],{auto:true}),navRow(null,{exit:false})]}},
+ {id:"fu-other",stage:0,render(){return [H("還有想說的嗎？"),textIn("fuOther",S.fu,"other","可不填",{area:true,max:300}),navRow(nextBtn("產生回顧卡"),{exit:false})]}},
+ {id:"fu-card",stage:0,render(){return summaryView("【脫鉤練習｜3 天後回顧】",buildFollowup())}}
+];
+const FLOWS={full:FULL,quick:QUICK,fb:FB,fu:FU};
+
+/* ---------------- special screens ---------------- */
+const SPECIAL={
+ home(){
+   const entries=[];
+   if(resume)entries.push(el("button",{class:"entry primary",type:"button",on:{click:()=>{const r=resume;resume=null;pos={...r};hist=[];render()}}},
+     el("b",{text:"繼續剛剛的練習"}),el("span",{class:"t",text:STAGES[resume.flow][FLOWS[resume.flow][resume.i].stage]}),el("span",{class:"d",text:FLOWNAME[resume.flow]+"，從你離開的地方接著做"})));
+   entries.push(
+     el("button",{class:"entry"+(resume?"":" primary"),type:"button",on:{click:()=>startFlow("full")}},el("b",{text:"完整練習"}),el("span",{class:"t",text:"10 分鐘"}),el("span",{class:"d",text:"第一次來，從這裡開始"})),
+     el("button",{class:"entry",type:"button",on:{click:()=>startFlow("quick")}},el("b",{text:"快速版"}),el("span",{class:"t",text:"2 分鐘"}),el("span",{class:"d",text:"現在很亂，先鬆開一點"})),
+     el("button",{class:"entry",type:"button",on:{click:()=>startFlow("fu")}},el("b",{text:"3 天後回顧"}),el("span",{class:"t",text:"1 分鐘"}),el("span",{class:"d",text:"做過練習，回來說說"})));
+   const art=hookArt();later(()=>art.classList.add("free"),1400);
+   return [
+     el("div",{class:"stack",style:"gap:6px"},el("h1",{text:"脫鉤"}),P("腦中那句甩不掉的話，可以不用聽它的。","big")),
+     art,
+     el("div",{class:"stack"},...entries),
+     el("div",{class:"stack",style:"gap:8px"},el("p",{class:"small muted",text:"我的脫鉤"}),el("div",{class:"tree"},node("認識了",skill.learned),node("自己試過",skill.tried),node("在生活中用過",skill.used))),
+     el("details",{},el("summary",{},"關於這次測試"),
+       P("這是測試版，想知道它好不好用，不是在評分你。"),
+       P("你打的字只留在這個頁面。最後的回饋卡不含你打的那句話，要不要傳由你決定。"),
+       P("練習整理自 WHO《Doing What Matters in Times of Stress》。"))
+   ];
+ },
+ smaller(){
+   const back=hist.length?hist[hist.length-1]:null;
+   return [H("現在做不到，很正常"),P("兩種都算完成這次練習。","muted"),
+     el("div",{class:"stack"},
+       el("button",{class:"btn",type:"button",on:{click:()=>{S.usedSmaller=true;goSpecial("mini")}}},"試 20 秒小版本"),
+       el("button",{class:"btn ghost",type:"button",on:{click:()=>startFlow("fb")}},"先結束，給個回饋"),
+       el("button",{class:"btn ghost",type:"button",on:{click:goHome}},"回入口"),
+       back?el("button",{class:"linkbtn",type:"button",on:{click:()=>{S.exitedAt="";goBack()}}},"我想回剛剛那一步"):null)];
+ },
+ mini(){
+   const typed=el("span",{class:"pre"}),rest=el("span");
+   const items=[{el:P("只做一件事：","big")},{el:quote(typed,rest),on:()=>typeInto(typed,"我注意到我有一個想法：",80,()=>rest.textContent=thought()),hold:3400},{el:P("在心裡說一次。這樣就夠了。","big")}];
+   const hint=reveal(items,{gap:1200});
+   return [...items.map(x=>x.el),hint,el("div",{class:"nav"},el("button",{class:"linkbtn",type:"button",on:{click:goHome}},"回入口"),el("button",{class:"btn",type:"button",on:{click:()=>startFlow("fb")}},"給個回饋"))];
+ }
+};
+
+/* ---------------- summary ---------------- */
+const fmt=ms=>{const s=Math.round(ms/1000);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")};
+function buildSummary(){
+  closeTiming();
+  const f=S.fb,L=[],when=S.ifWhen==="自己寫"?(S.ifCustom.trim()?"自己寫："+S.ifCustom.trim():""):S.ifWhen;
+  const route=S.quickDone&&!T.stage["full:0"]?"快速版":"完整練習";
+  L.push("代號："+(S.code.trim()||"（未填）"));
+  L.push("走的路線："+route);
+  L.push("完成情形："+(S.exitedAt?("在「"+stageOf(S.exitedAt)+"」選了先到這裡"+(S.usedSmaller?"，做了 20 秒小版本":"")):"走完全程"));
+  if(T.start)L.push("總時間："+fmt(Date.now()-T.start));
+  const st=route==="快速版"?STAGES.quick.map((s,i)=>s+" "+(T.stage["quick:"+i]?fmt(T.stage["quick:"+i]):"—")):STAGES.full.map((s,i)=>s+" "+(T.stage["full:"+i]?fmt(T.stage["full:"+i]):"—"));
+  L.push("各步時間："+st.join("｜"),"","〔操作紀錄〕");
+  L.push("加上「我注意到」後："+(S.feel1||"—"));
+  if(route==="完整練習"){
+    L.push("示範中選的做法："+(S.storyChoice||"—"));
+    L.push("拉力：做之前 "+(S.pullBefore??"—")+" → 做之後 "+(S.pullAfter??"—")+"（0–10）");
+    L.push("身體："+(S.body.length?S.body.join("、"):"—"));
+    L.push("叫出來的方式："+(S.nameStyle||"—")+"；選了一件小事："+(S.nextThing.trim()?"有":"沒有"));
+    L.push("說給人聽："+(S.advice.trim()?(S.shareAdvice?"「"+S.advice.trim()+"」":"有寫，選擇不分享"):"沒寫"));
+    L.push("如果—就的時刻："+(when||"—"));
+  }
+  L.push("","〔回饋〕");
+  L.push("最卡的一步："+(f.stuck||"—"),"看不懂或要猜："+((f.unclear||"").trim()||"—"),"做完後："+(f.effect||"—"),
+    "逐句速度："+(f.pace||"—"),"長度："+(f.length||"—"),"說給人聽的感覺："+(f.teachFeel||"—"),"3 天內會想起來用："+(f.willUse||"—"),"其他："+((f.other||"").trim()||"—"));
+  return L.join("\n");
+}
+function buildFollowup(){const u=S.fu;return ["代號："+(S.code.trim()||"（未填）"),"有想起來嗎："+(u.remember||"—"),"使用的時候："+((u.when||"").trim()||"—"),"用了之後："+(u.helped||"—"),"沒用的主因："+(u.why||"—"),"其他："+((u.other||"").trim()||"—")].join("\n")}
+function summaryView(head,body){
+  const text=head+"\n"+body,pre=el("pre",{class:"out",text}),msg=el("p",{class:"small muted"});
+  const sel=()=>{const r=document.createRange();r.selectNodeContents(pre);const s=getSelection();s.removeAllRanges();s.addRange(r)};
+  const copy=el("button",{class:"btn",type:"button",on:{click:()=>{
+    try{navigator.clipboard.writeText(text).then(()=>msg.textContent="已複製。貼到 LINE 傳給邀請你的人就完成了。",()=>{sel();msg.textContent="已選取文字，請長按複製。"})}catch(e){sel();msg.textContent="已選取文字，請長按複製。"}}}},"複製回饋卡");
+  return [H("謝謝你！把這張卡傳給邀請你的人"),P("卡片裡沒有你打的那句話。","muted small"),pre,el("div",{class:"row"},copy,el("button",{class:"btn ghost",type:"button",on:{click:goHome}},"回入口")),msg];
+}
+function stageOf(id){for(const f of ["full","quick"]){const s=FLOWS[f].find(x=>x.id===id);if(s)return STAGES[f][s.stage]}return id}
+
+/* ---------------- navigation, timing, progress ---------------- */
+const curScreen=()=>pos.flow==="special"?{id:pos.id}:pos.flow==="home"?{id:"home"}:FLOWS[pos.flow][pos.i];
+function timingKey(){return (pos.flow==="full"||pos.flow==="quick")?pos.flow+":"+FLOWS[pos.flow][pos.i].stage:null}
+function closeTiming(){if(T.curKey)T.stage[T.curKey]=(T.stage[T.curKey]||0)+(Date.now()-T.curStart);T.curStart=Date.now()}
+function startFlow(f){hist=[];if(f==="full"||f==="quick"){resume=null;if(!T.start)T.start=Date.now()}pos={flow:f,i:0};render()}
+function next(){const F=FLOWS[pos.flow];let i=pos.i+1;while(i<F.length&&F[i].skip&&F[i].skip())i++;if(i>=F.length)return goHome();hist.push({...pos});pos={flow:pos.flow,i};render()}
+function goBack(){if(!hist.length)return;pos=hist.pop();render()}
+function goSpecial(id){hist.push({...pos});pos={flow:"special",id,from:lastFlowPos()};render()}
+function lastFlowPos(){if(pos.flow==="special")return pos.from;return pos.flow==="home"?null:{...pos}}
+function goHome(){const p=lastFlowPos();if(p&&(p.flow==="full"||p.flow==="quick")&&!isEnd(p))resume=p;else if(p&&p.flow!=="fb"&&p.flow!=="fu")resume=null;hist=[];pos={flow:"home",i:0};render()}
+function isEnd(p){const F=FLOWS[p.flow];return p.i>=F.length-1}
+
+function renderTrack(){
+  const tp=pos.flow==="special"?pos.from:(pos.flow==="home"?null:pos);
+  const tr=$("#track");$("#homeBtn").hidden=pos.flow==="home";
+  $("#flowName").textContent=tp?FLOWNAME[tp.flow]:"";$("#brand").style.visibility=pos.flow==="home"?"hidden":"visible";
+  if(!tp){tr.hidden=true;return}
+  tr.hidden=false;
+  const F=FLOWS[tp.flow],names=STAGES[tp.flow],cur=F[tp.i].stage;
+  const inStage=F.filter(s=>s.stage===cur),sub=inStage.indexOf(F[tp.i])+1;
+  const segs=$("#segs"),labels=$("#labels");segs.textContent="";labels.textContent="";
+  names.forEach((n,k)=>{
+    const fill=k<cur?100:k>cur?0:Math.round(sub/inStage.length*100);
+    const i=el("i");const s=el("div",{class:"seg"},i);segs.append(s);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>i.style.width=fill+"%"));
+    const lab=el("span",{class:k===cur?"now":""},n);if(k===cur)lab.append(el("b",{text:sub+"/"+inStage.length}));labels.append(lab);
+  });
+  if(names.length===1)labels.firstChild.style.textAlign="left";
+}
+function render(){
+  cleanups.forEach(f=>f());cleanups=[];
+  closeTiming();T.curKey=timingKey();
+  const m=$("#screen");m.textContent="";m.classList.remove("enter");void m.offsetWidth;m.classList.add("enter");
+  document.body.classList.toggle("home",pos.flow==="home");
+  renderTrack();
+  const nodes=pos.flow==="home"?SPECIAL.home():pos.flow==="special"?SPECIAL[pos.id]():FLOWS[pos.flow][pos.i].render();
+  nodes.forEach(n=>n&&m.append(n));
+  window.scrollTo(0,0);
+  const h=m.querySelector("h1,h2");if(h){h.setAttribute("tabindex","-1");h.focus({preventScroll:true})}
+}
+
+$("#homeBtn").addEventListener("click",goHome);
+$("#helpBtn").addEventListener("click",e=>{const b=$("#helpBox");b.hidden=!b.hidden;e.currentTarget.setAttribute("aria-expanded",String(!b.hidden))});
+function route(){if(location.hash==="#followup")startFlow("fu");else render()}
+window.addEventListener("hashchange",route);
+route();
+})();
+</script>
+
+</body></html>

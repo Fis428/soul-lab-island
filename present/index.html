@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>回到當下練習</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
+<style>
+/* Same visual system as 脫鉤練習, so the two units read as one family. */
+:root{
+  --bg:#eef2f1; --surface:#ffffff; --ink:#1b2928; --muted:#5a6b68; --line:#d3dcda;
+  --accent:#2c6b63; --accent-ink:#ffffff; --soft:#dfece9; --warm:#c2643f; --focus:#2c6b63;
+  --display:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --r:16px; color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#111716; --surface:#192221; --ink:#e4ecea; --muted:#9caca9; --line:#2b3836;
+  --accent:#71c2b6; --accent-ink:#0d1716; --soft:#1e3330; --warm:#e08a63; --focus:#71c2b6; color-scheme:dark}}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.7;margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(40px + env(safe-area-inset-bottom,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+[hidden]{display:none!important}
+.wrap{max-width:540px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px 8px;display:flex;flex-direction:column;gap:10px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:32px}
+.home-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:4px 12px 4px 8px;font-size:14px}
+.home-btn svg{width:16px;height:16px}
+.bar .name{font-family:var(--display);font-size:16px;letter-spacing:.06em}
+.bar .flow{font-size:12.5px;color:var(--muted)}
+.track{display:flex;flex-direction:column;gap:6px}
+.segs{display:flex;gap:5px}
+.seg{flex:1;height:5px;border-radius:5px;background:var(--line);overflow:hidden}
+.seg i{display:block;height:100%;width:0;background:var(--accent);border-radius:5px;transition:width .45s ease}
+.labels{display:flex;justify-content:space-between;gap:6px;font-size:12px;color:var(--muted)}
+.labels span{flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.labels span.now{color:var(--ink);font-weight:700}
+.labels b{font-variant-numeric:tabular-nums;color:var(--accent);font-weight:700;margin-left:4px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:26px 20px 22px;display:flex;flex-direction:column;gap:18px;min-width:0;min-height:360px}
+.home .card{min-height:0}
+h1,h2{font-family:var(--display);font-weight:700;margin:0;text-wrap:balance;line-height:1.45}
+h1{font-size:40px;letter-spacing:.08em;line-height:1.2}
+h2{font-size:22px}
+p{margin:0} .muted{color:var(--muted)} .small{font-size:14px}
+.stack{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button{font:inherit;cursor:pointer;color:inherit}
+.btn{border:0;border-radius:999px;padding:12px 24px;background:var(--accent);color:var(--accent-ink);font-weight:500;font-size:16px}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
+.linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;padding:6px 2px;font-size:14px}
+a.linkbtn{display:inline-block}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+[tabindex="-1"]:focus{outline:none}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:13px 16px;transition:background .2s,border-color .2s}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--soft);font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 15px;font-size:15px}
+.chip[aria-pressed="true"]{border-color:var(--accent);background:var(--soft);font-weight:500}
+input[type=text],textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px}
+textarea{min-height:90px;resize:vertical}
+.quote{font-family:var(--display);font-size:20px;line-height:1.6;padding:16px 18px;border-radius:14px;background:var(--soft);word-break:break-word}
+.note{border-left:3px solid var(--accent);padding:2px 0 2px 12px}
+.big{font-family:var(--display);font-size:20px;line-height:1.6}
+.s3{display:grid;grid-template-columns:36px 1fr;gap:12px;align-items:start}
+.s3 .n{width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:700}
+.s3 b{font-size:17px} .s3 em{font-style:normal;color:var(--muted);font-size:15px;display:block}
+.scale{display:grid;grid-template-columns:repeat(11,1fr);gap:4px}
+.scale button{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:9px 0;font-size:14px;font-variant-numeric:tabular-nums}
+.scale button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.scale-ends{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted)}
+/* attention bar: where is your attention, head ←→ here */
+.att{display:flex;flex-direction:column;gap:6px}
+.att .cells{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding-top:22px}
+.att .cell{position:relative;height:46px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:0}
+.att .cell::after{content:"";position:absolute;left:50%;top:50%;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:var(--line)}
+.att .cell[aria-pressed="true"]{background:var(--accent);border-color:var(--accent)}
+.att .cell[aria-pressed="true"]::after{background:var(--accent-ink)}
+.att .mark{position:absolute;bottom:calc(100% + 3px);left:50%;transform:translateX(-50%);font-size:11px;white-space:nowrap;color:var(--warm);font-weight:700;line-height:1.2;text-align:center}
+.att .ends{display:grid;grid-template-columns:1fr 1fr 1fr;font-size:12.5px;color:var(--muted)}
+.att .ends span:nth-child(2){text-align:center} .att .ends span:nth-child(3){text-align:right}
+/* reveal */
+.rv{opacity:0;transform:translateY(8px);transition:opacity .6s ease,transform .6s ease;visibility:hidden}
+.rv.in{opacity:1;transform:none;visibility:visible}
+.tap{font-size:12.5px;color:var(--muted);text-align:center;transition:opacity .3s}
+/* guided pieces */
+.ring{width:150px;height:150px;margin:6px auto;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .lbl{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-size:30px;color:var(--accent);font-variant-numeric:tabular-nums}
+.breath{display:flex;flex-direction:column;align-items:center;gap:12px;margin:4px auto}
+.breath .orbbox{width:150px;height:150px;position:relative}
+.breath .orb{position:absolute;inset:0;border-radius:50%;background:var(--soft);border:2px solid var(--accent);transform:scale(1);transition-property:transform;transition-timing-function:ease-in-out}
+.breath .lbl{font-family:var(--display);font-size:19px;color:var(--accent);text-align:center;min-height:1.6em}
+.dots{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.dotbtn{width:52px;height:52px;border-radius:50%;border:2px dashed var(--accent);background:transparent;color:var(--accent);font-weight:700;font-size:18px;transition:background .25s,transform .25s}
+.dotbtn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-style:solid;transform:scale(1.06)}
+.safety{font-size:13px;color:var(--muted);text-align:center}
+/* storm & tree */
+.treeart{width:100%;max-width:320px;margin:0 auto;display:block}
+.treeart .who{transition:transform 1.6s cubic-bezier(.4,.1,.2,1)}
+.treeart.down .who{transform:translate(-58px,64px)}
+.treeart .wind{animation:wind 2.6s ease-in-out infinite}
+.treeart .wind.b{animation-delay:.9s}
+.treeart .crown{transform-origin:206px 120px;animation:sway 2.8s ease-in-out infinite}
+@keyframes wind{0%{transform:translateX(-14px);opacity:0}40%{opacity:.9}100%{transform:translateX(24px);opacity:0}}
+@keyframes sway{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(2.5deg)}}
+/* card + skill tree */
+.gcard{border:1.5px dashed var(--accent);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:4px}
+.gcard .k{font-size:12px;letter-spacing:.14em;color:var(--muted)}
+.gcard .v{font-family:var(--display);font-size:18px;margin-bottom:8px}
+.tree{display:flex;gap:8px;flex-wrap:wrap}
+.node{display:flex;align-items:center;gap:6px;font-size:14px;border:1px solid var(--line);border-radius:999px;padding:5px 12px;color:var(--muted);transition:all .4s}
+.node .dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--line);transition:all .4s}
+.node.done{color:var(--ink);border-color:var(--accent)} .node.done .dot{background:var(--accent);border-color:var(--accent)}
+/* home */
+.entry{display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:center;text-align:left;width:100%;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:16px 18px;transition:border-color .2s}
+.entry:hover{border-color:var(--accent)}
+.entry b{font-size:18px} .entry .t{font-size:13px;color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+.entry .d{grid-column:1/-1;font-size:14px;color:var(--muted)}
+.entry.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.entry.primary .t,.entry.primary .d{color:var(--accent-ink);opacity:.85}
+details{font-size:14px;color:var(--muted)}
+details summary{cursor:pointer;padding:4px 0}
+details p{margin-top:6px}
+pre.out{white-space:pre-wrap;word-break:break-word;font-family:var(--body);font-size:14px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px;margin:0;max-height:320px;overflow:auto;user-select:all}
+footer.help{font-size:13px;color:var(--muted);text-align:center}
+.helpbox{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:14px;display:flex;flex-direction:column;gap:6px;text-align:left}
+footer .helpbox{margin-top:6px}
+.tel{font-size:20px;font-weight:700;color:var(--ink);user-select:all}
+.enter{animation:enter .35s ease both}
+@keyframes enter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.enter,.treeart .wind,.treeart .crown{animation:none}.rv,.treeart .who,.seg i,.breath .orb{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="bar">
+      <button class="home-btn" id="homeBtn" type="button" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>入口</button>
+      <span class="name" id="brand">回到當下</span>
+      <span class="flow" id="flowName"></span>
+    </div>
+    <div class="track" id="track" hidden><div class="segs" id="segs"></div><div class="labels" id="labels"></div></div>
+  </header>
+  <main id="screen" class="card enter" aria-live="polite"></main>
+  <footer class="help">
+    <button class="linkbtn" id="helpBtn" type="button" aria-expanded="false">現在真的很難受？</button>
+    <div class="helpbox" id="helpBox" hidden></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+const UNHOOK_URL="../defuse/";
+
+/* ---------------- state ---------------- */
+const S={type:"",att0:null,storm0:null,att1:null,storyChoice:"",notice:[],bodyAct:"",touch:"",place:"",doing:"",
+  att2:null,storm2:null,steady:"",nextStep:"",advice:"",shareAdvice:false,skippedFriend:false,ifWhen:"",ifCustom:"",forget:"",
+  exitedAt:"",usedSmaller:false,quickFeel:"",quickDone:false,fb:{},code:"",fu:{}};
+const T={start:null,stage:{},curKey:null,curStart:Date.now()};
+let pos={flow:"home",i:0}, hist=[], resume=null, cleanups=[];
+const store={get(k){try{return JSON.parse(localStorage.getItem("ground:"+k))}catch(e){return null}},set(k,v){try{localStorage.setItem("ground:"+k,JSON.stringify(v))}catch(e){}}};
+const skill=Object.assign({learned:false,tried:false,used:false},store.get("skill")||{});
+S.code=store.get("code")||"";
+
+const $=s=>document.querySelector(s);
+const el=(tag,attrs={},...kids)=>{const e=document.createElement(tag);for(const k in attrs){const v=attrs[k];if(k==="on")for(const ev in v)e.addEventListener(ev,v[ev]);else if(k==="class")e.className=v;else if(k==="text")e.textContent=v;else if(v!==false&&v!=null)e.setAttribute(k,v)}kids.flat().forEach(c=>{if(c==null||c===false)return;e.append(c.nodeType?c:document.createTextNode(c))});return e};
+const P=(t,c)=>el("p",{class:c||""},t);
+const H=t=>el("h2",{text:t});
+const later=(fn,ms)=>{const id=setTimeout(fn,ms);cleanups.push(()=>clearTimeout(id));return id};
+const every=(fn,ms)=>{const id=setInterval(fn,ms);cleanups.push(()=>clearInterval(id));return id};
+const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const quote=(...k)=>el("div",{class:"quote"},...k);
+const saveSkill=()=>store.set("skill",skill);
+
+function helpContent(){
+  return [P("這個練習不是治療。有時候風暴太大，一個人撐不住是正常的。可以找："),
+    el("p",{},el("span",{class:"tel",text:"1925"}),"　衛福部安心專線，24 小時、免付費"),
+    P("學校的諮商中心，或一個你信任的人。"),
+    el("p",{},"有立即危險，請撥 ",el("span",{class:"tel",text:"119"})," 或 ",el("span",{class:"tel",text:"110"}),"。")];
+}
+
+/* reveal: items appear one by one; tap the card to bring the next one now */
+function reveal(items,{gap=1400,first=350,onDone}={}){
+  items.forEach(it=>it.el.classList.add("rv"));
+  let n=0,timer=null,done=false;
+  const hint=el("p",{class:"tap",text:"點一下畫面，下一句會馬上出來"});
+  function step(){
+    if(done)return;
+    const it=items[n++]; it.el.classList.add("in"); it.on&&it.on();
+    if(n>=items.length){done=true;hint.style.opacity="0";onDone&&later(onDone,it.after??250);return}
+    timer=later(step,items[n-1].hold??gap);
+  }
+  const card=$("#screen");
+  const tap=e=>{if(done||e.target.closest("button,input,textarea,label,a"))return;clearTimeout(timer);step()};
+  card.addEventListener("click",tap);cleanups.push(()=>card.removeEventListener("click",tap));
+  later(step,first);
+  return hint;
+}
+
+/* ---------------- building blocks ---------------- */
+function nextBtn(label="下一步",{needs,to,hidden}={}){
+  const b=el("button",{class:"btn",type:"button","data-next":"1"},label);
+  b.addEventListener("click",()=>{if(needs&&!needs())return;to?to():next()});
+  b._needs=needs; if(needs&&!needs())b.disabled=true; if(hidden)b.hidden=true;
+  return b;
+}
+function navRow(btn,{exit=true,back=true,extra}={}){
+  const left=el("div",{class:"row"});
+  if(back&&hist.length&&hist[hist.length-1].flow===pos.flow)left.append(el("button",{class:"linkbtn",type:"button",on:{click:goBack}},"上一步"));
+  if(extra)left.append(extra);
+  if(exit)left.append(el("button",{class:"linkbtn",type:"button",on:{click:()=>{S.exitedAt=curScreen().id;goSpecial("smaller")}}},"現在做不到"));
+  return el("div",{class:"nav"},left,btn||el("span"));
+}
+function refreshNext(){const b=$("#screen [data-next]");if(b&&b._needs)b.disabled=!b._needs()}
+function opts(obj,key,list,{auto=false,after,labels}={}){
+  const w=el("div",{class:"stack",role:"group"});
+  list.forEach(v=>{const b=el("button",{class:"opt",type:"button","aria-pressed":String(obj[key]===v)},(labels&&labels[v])||v);
+    b.addEventListener("click",()=>{obj[key]=v;w.querySelectorAll(".opt").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));after&&after(v);refreshNext();if(auto)later(()=>next(),420)});w.append(b)});
+  return w;
+}
+function chips(list,{get,set}){
+  const w=el("div",{class:"chips",role:"group"});
+  const sync=()=>w.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",String(get().includes(x.dataset.v))));
+  list.forEach(v=>{const b=el("button",{class:"chip",type:"button","data-v":v},v);b.addEventListener("click",()=>{set(v);sync();refreshNext()});w.append(b)});
+  w._sync=sync;sync();return w;
+}
+function scale(key,{auto=true,after,ends=["0 很平靜","10 很大的風暴"]}={}){
+  const w=el("div",{class:"stack"}),row=el("div",{class:"scale",role:"group","aria-label":"0 到 10"});
+  for(let i=0;i<=10;i++){const b=el("button",{type:"button","aria-pressed":String(S[key]===i)},String(i));
+    b.addEventListener("click",()=>{S[key]=i;row.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));refreshNext();after&&after();if(auto)later(()=>next(),450)});row.append(b)}
+  w.append(row,el("div",{class:"scale-ends"},el("span",{text:ends[0]}),el("span",{text:ends[1]})));return w;
+}
+const ATT=["全在腦袋裡","多半在腦袋裡","一半一半","多半在眼前","全在眼前"];
+function attBar(key,{marks={},after}={}){
+  const w=el("div",{class:"att"}),cells=el("div",{class:"cells",role:"group","aria-label":"注意力在哪裡"});
+  for(let i=1;i<=5;i++){
+    const b=el("button",{class:"cell",type:"button","aria-pressed":String(S[key]===i),"aria-label":ATT[i-1]});
+    const tags=Object.keys(marks).filter(k=>S[k]===i).map(k=>marks[k]);
+    if(tags.length)b.append(el("span",{class:"mark",text:tags.join("・")}));
+    b.addEventListener("click",()=>{S[key]=i;cells.querySelectorAll(".cell").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));refreshNext();after&&after(i)});
+    cells.append(b);
+  }
+  w.append(cells,el("div",{class:"ends"},el("span",{text:"全在腦袋裡"}),el("span",{text:"一半一半"}),el("span",{text:"全在眼前"})));
+  return w;
+}
+function textIn(id,obj,key,ph,{area=false,max=80}={}){
+  const i=el(area?"textarea":"input",{id,type:area?false:"text",maxlength:String(max),placeholder:ph});i.value=obj[key]||"";
+  i.addEventListener("input",()=>{obj[key]=i.value;refreshNext()});return i;
+}
+function step3(n,title,desc){return el("div",{class:"s3"},el("span",{class:"n",text:n}),el("div",{},el("b",{text:title}),el("em",{text:desc})))}
+function node(t,done){return el("span",{class:"node"+(done?" done":"")},el("span",{class:"dot"}),t)}
+function skillTree(){return el("div",{class:"stack",style:"gap:8px"},el("p",{class:"small muted",text:"我的回到當下"}),el("div",{class:"tree"},node("認識了",skill.learned),node("自己試過",skill.tried),node("在生活中用過",skill.used)))}
+
+function treeArt(){
+  const ns="http://www.w3.org/2000/svg",svg=document.createElementNS(ns,"svg");
+  svg.setAttribute("viewBox","0 0 320 150");svg.setAttribute("class","treeart");svg.setAttribute("role","img");svg.setAttribute("aria-label","風很大的時候，一個人從樹上爬下來，站到地面上");
+  svg.innerHTML=
+   '<line x1="10" y1="136" x2="310" y2="136" style="stroke:var(--muted)" stroke-width="2" stroke-linecap="round"/>'+
+   '<g class="wind"><path d="M24 40 q22 -8 44 0 t44 0" fill="none" style="stroke:var(--muted)" stroke-width="2" stroke-linecap="round"/></g>'+
+   '<g class="wind b"><path d="M40 72 q18 -7 36 0 t36 0" fill="none" style="stroke:var(--muted)" stroke-width="2" stroke-linecap="round"/></g>'+
+   '<rect x="200" y="78" width="12" height="58" rx="3" style="fill:var(--warm)"/>'+
+   '<g class="crown"><ellipse cx="206" cy="58" rx="56" ry="38" style="fill:var(--soft);stroke:var(--accent)" stroke-width="2"/>'+
+   '<path d="M206 82 L178 66" style="stroke:var(--warm)" stroke-width="5" stroke-linecap="round"/></g>'+
+   '<g class="who"><circle cx="180" cy="44" r="7" style="fill:var(--accent)"/><rect x="175" y="52" width="10" height="17" rx="5" style="fill:var(--accent)"/></g>';
+  return svg;
+}
+
+/* ---------------- guided pieces (WHO 練習 1／2 的互動版) ---------------- */
+function breathe(box,cycles,onDone,lead){
+  box.textContent="";
+  const orb=el("div",{class:"orb"}),lbl=el("div",{class:"lbl"});
+  const wrap=el("div",{class:"breath"},el("div",{class:"orbbox"},orb),lbl);
+  if(lead)box.append(el("p",{class:"big",text:lead}));
+  box.append(wrap,el("p",{class:"safety",text:"如果頭暈或更緊張，就正常呼吸，只做身體的動作。"}),
+    el("button",{class:"linkbtn",type:"button",style:"align-self:center",on:{click:()=>{stop=true;onDone()}}},"跳過"));
+  let n=0,stop=false;
+  function out(){if(stop)return;lbl.textContent="慢慢吐氣，吐乾淨……";orb.style.transitionDuration=RM?"0s":"5s";orb.style.transform="scale(.55)";later(inn,5000)}
+  function inn(){if(stop)return;lbl.textContent="讓空氣自己慢慢回來";orb.style.transitionDuration=RM?"0s":"4s";orb.style.transform="scale(1)";later(()=>{if(++n>=cycles){if(!stop){stop=true;later(onDone,400)}}else out()},4000)}
+  later(out,500);
+}
+function feet(box,text,onDone){
+  box.textContent="";
+  const C=2*Math.PI*64,ns="http://www.w3.org/2000/svg";
+  const ring=el("div",{class:"ring"});const svg=document.createElementNS(ns,"svg");svg.setAttribute("viewBox","0 0 150 150");
+  svg.innerHTML=`<circle cx="75" cy="75" r="64" fill="none" style="stroke:var(--line)" stroke-width="8"/><circle class="arc" cx="75" cy="75" r="64" fill="none" style="stroke:var(--accent);transition:stroke-dashoffset 1s linear" stroke-width="8" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C}"/>`;
+  const lbl=el("div",{class:"lbl",text:"8"});ring.append(svg,lbl);
+  let t;
+  box.append(el("p",{class:"big",text}),ring,el("button",{class:"linkbtn",type:"button",style:"align-self:center",on:{click:()=>{clearInterval(t);onDone()}}},"跳過"));
+  let s=8;const arc=svg.querySelector(".arc");
+  later(()=>arc.style.strokeDashoffset=String(C*(1-1/8)),50);
+  t=every(()=>{s--;lbl.textContent=String(Math.max(s,0));arc.style.strokeDashoffset=String(C*(1-Math.min(8-s+1,8)/8));if(s<=0){clearInterval(t);later(onDone,600)}},1000);
+}
+function taps(box,text,count,onDone,hint="找到一個，就點一下。"){
+  box.textContent="";let got=0;
+  const dots=el("div",{class:"dots"});
+  for(let i=1;i<=count;i++){const b=el("button",{class:"dotbtn",type:"button","aria-pressed":"false","aria-label":"找到第 "+i+" 個"},String(i));
+    b.addEventListener("click",()=>{if(b.getAttribute("aria-pressed")==="true")return;b.setAttribute("aria-pressed","true");if(++got>=count)later(onDone,700)});dots.append(b)}
+  box.append(el("p",{class:"big",text}),dots,P(hint,"muted small"));
+}
+/* the 30-second version: breathe once → feet → see 3 (→ hear 1) */
+function guided30(box,onEnd,{hear=false}={}){
+  breathe(box,1,()=>feet(box,"雙腳慢慢踩一下地板，感覺地板在你腳下。",()=>taps(box,"看看周圍，找出 3 樣你看得到的東西。",3,()=>{
+    if(hear)taps(box,"再聽一個聲音。",1,onEnd);else onEnd();
+  })),"先不說道理，跟著做就好。");
+}
+
+/* ---------------- content ---------------- */
+const TYPES={spin:"腦袋一直轉，停不下來",much:"事情太多，不知道從哪開始",heart:"心跳很快、身體很緊",unsure:"說不上來，就是很亂"};
+const STORIES={
+ spin:{name:"阿晴",who:"阿晴，大二。",setup:["凌晨一點，燈關了，腦袋還在跑。","明天的報告、下學期的課、以後要做什麼……","她翻了第二十次身，伸手拿手機。"],
+  steps:[["注意到","「我發現我腦袋停不下來，胸口悶悶的。」"],["放慢","她把手機放回去，腳在被子裡踩一下床尾，慢慢吐一口長氣。"],["看周圍","「冷氣的聲音、窗簾縫透進來的光、被子的重量。我在房間，我正躺著。」"]],
+  choices:{"不逼自己睡，就躺著聽冷氣聲":"想法還是會來，但她沒有再跟著一直跑。","把明天要做的一件事寫在便條上":"先放在一個地方，腦袋就不用整晚抱著它。","傳訊息跟室友說睡不著":"室友回了一個抱抱的貼圖。找人說，也是一個下一步。"}},
+ much:{name:"小威",who:"小威，大三。",setup:["晚上九點，打開電腦。","十個分頁、三個截止日、兩個沒回的群組訊息。","他點來點去，半小時過去，什麼都沒做。"],
+  steps:[["注意到","「我發現我一直在切分頁，肩膀很緊，腦袋很吵。」"],["放慢","他把手從滑鼠上拿開，雙腳踩地，慢慢吐一口氣。"],["看周圍","「桌上的水杯、窗外的機車聲、冷氣吹在手臂上。我在宿舍，我正坐著。」"]],
+  choices:{"喝一口水，只關掉一個分頁":"事情還是很多，但他開始動了。","先去洗個臉，休息五分鐘":"休息也是一個下一步。回來時，他比較知道先做哪個。","傳訊息問同學哪個最急":"同學說報告最急。找人幫忙，也算。"}},
+ heart:{name:"小安",who:"小安，大四。",setup:["面試會議室外，還有五分鐘輪到她。","心跳很快，手心都是汗。","腦中一直排練第一句話，越排越亂。"],
+  steps:[["注意到","「我注意到心跳很快、手在抖，我一直在想說錯怎麼辦。」"],["放慢","她雙手放在膝蓋上，慢慢互壓，吐一口長氣。"],["看周圍","「白色的牆、對面椅子上的包包、遠處印表機的聲音。我在走廊，我正坐著等。」"]],
+  choices:{"再看一次自我介紹的第一句":"心跳還是快，但這次她讀得進去了。","起來倒一杯水":"走一走，手比較不抖了。緊張還在，她帶著它走進去。","就坐著，感覺腳踩在地上":"五分鐘沒有變短，但她不再被那些「萬一」拖著跑。"}}
+};
+const story=()=>STORIES[S.type==="spin"?"spin":S.type==="heart"?"heart":"much"];
+const NOTICE={"想法很多":"很多想法","心跳快":"心跳很快","肩膀或胸口緊":"肩膀或胸口很緊","胃不舒服":"胃不太舒服","很想逃開":"很想逃開的感覺","很累":"很累的感覺","說不上來":"說不上來的感覺"};
+const BODY={"雙腳慢慢踩地":"雙腳慢慢踩地（在哪都能做）","雙手慢慢互壓":"雙手慢慢互壓（上課、開會時也看不出來）","慢慢伸展手臂":"慢慢伸展手臂"};
+const BODY_DO={"雙腳慢慢踩地":"一邊雙腳慢慢踩進地板","雙手慢慢互壓":"一邊雙手慢慢互壓","慢慢伸展手臂":"一邊慢慢伸展手臂"};
+const THEN="腳踩地、吐一口長氣、找 3 樣看得到的東西";
+const FORGET={"太亂了，想不起來":"把這張卡設成鎖定畫面，或在手機鬧鐘的標籤寫「腳踩地」。","覺得沒用，就不做了":"不用等到很有效才做。做 30 秒，看注意力有沒有移一點點就好。","在別人面前做很尷尬":"雙手互壓、腳踩地，別人看不出來。","其他／不知道":"把它綁在一件你本來就會做的事上，例如每次坐到書桌前。"};
+const FORGET_SHORT={"太亂了，想不起來":"設成鎖定畫面／鬧鐘標籤","覺得沒用，就不做了":"只做 30 秒，看一點點的移動","在別人面前做很尷尬":"用雙手互壓、腳踩地","其他／不知道":"綁在坐到書桌前"};
+const PAGES=["跟著圓圈吐氣、腳踩地的那頁","選「注意力在哪裡」的那頁","看學長姐故事的那幾頁","點畫面找 5 個看得到的東西那頁","寫一句話給學弟妹的那頁","選「什麼時候會用到」、做接地卡的那頁"];
+
+/* ---------------- flows ---------------- */
+const STAGES={full:["試一下","看示範","自己做","給朋友一句話","帶回生活"],quick:["注意","放慢","看周圍"],fb:["回饋"],fu:["回顧"]};
+const FLOWNAME={full:"完整練習",quick:"快速版",fb:"回饋",fu:"3 天後回顧"};
+
+const FULL=[
+ /* ---- 0 試一下 ---- */
+ {id:"type",stage:0,render(){
+   return [H("你現在比較像哪一種？"),P("選最接近的就好。現在不亂也可以，選一個最近常有的。","muted"),
+     opts(S,"type",Object.keys(TYPES),{auto:true,labels:TYPES}),navRow(null)];
+ }},
+ {id:"att0",stage:0,render(){
+   const ok=()=>S.att0!=null&&S.storm0!=null;
+   return [H("此刻，注意力比較多在哪裡？"),P("腦袋裡＝想法、擔心、回憶；眼前＝你在的地方、正在做的事。","muted small"),
+     attBar("att0"),el("p",{class:"big",style:"margin-top:6px",text:"風暴有多大？"}),scale("storm0",{auto:false}),
+     navRow(nextBtn("下一步",{needs:ok}))];
+ }},
+ {id:"try",stage:0,render(){
+   const box=el("div",{class:"stack"}),btn=nextBtn("下一步",{hidden:true});
+   later(()=>guided30(box,()=>{box.textContent="";box.append(P("好了。","big"));btn.hidden=false;btn.focus()}),200);
+   return [H("跟著做 30 秒"),box,navRow(btn)];
+ }},
+ {id:"att1",stage:0,render(){
+   const msg=el("p",{class:"note"});msg.hidden=true;const btn=nextBtn("下一步",{hidden:true});
+   const bar=attBar("att1",{marks:{att0:"一開始"},after:i=>{
+     msg.textContent=i>S.att0?"有往眼前移一點。這就是這個練習在做的事。":i===S.att0?"沒移動也很正常。等一下會用完整的版本再試一次。":"更在腦袋裡也沒關係。有時候一停下來，才發現想法有多少。";
+     msg.hidden=false;btn.hidden=false}});
+   return [H("再看一次：注意力在哪裡？"),P("第一次做，差別常常只有一點點。一點點也算數。","muted"),bar,msg,navRow(btn)];
+ }},
+ {id:"name-it",stage:0,render(){
+   skill.learned=true;saveSkill();
+   const btn=nextBtn("為什麼要這樣做？",{hidden:true});
+   const items=[{el:H("剛剛那個，叫做「回到當下」"),hold:1200},
+     {el:step3("1","注意","發現自己被情緒捲走了"),hold:1500},
+     {el:step3("2","放慢","慢慢吐氣，讓身體踩穩"),hold:1500},
+     {el:step3("3","看周圍","看、聽、摸，回到你在的地方"),hold:1500},
+     {el:P("一次 30 秒就能做完。","muted")}];
+   const hint=reveal(items,{onDone:()=>btn.hidden=false});
+   return [...items.map(x=>x.el),hint,navRow(btn)];
+ }},
+ /* ---- 1 看示範 ---- */
+ {id:"storm",stage:1,render(){
+   const art=treeArt(),btn=nextBtn("看個例子",{hidden:true});
+   const items=[{el:art,hold:1200},
+     {el:P("情緒很大的時候，就像風暴來了。","big")},
+     {el:P("風暴來的時候待在樹上很危險。先下到地面。","big"),on:()=>later(()=>art.classList.add("down"),300),hold:2600},
+     {el:P("風暴還在，但你站得比較穩，也看得到下一步。","big")},
+     {el:el("p",{class:"note small",text:"這個比喻來自 WHO《Doing What Matters in Times of Stress》。"})}];
+   const hint=reveal(items,{gap:1900,onDone:()=>btn.hidden=false});
+   return [...items.map(x=>x.el),hint,navRow(btn)];
+ }},
+ {id:"story",stage:1,render(){
+   const s=story(),btn=nextBtn("看"+s.name+"怎麼做",{hidden:true});
+   const items=[{el:P(s.who,"big muted")},...s.setup.map(t=>({el:P(t,"big")}))];
+   const hint=reveal(items,{gap:1700,onDone:()=>btn.hidden=false});
+   return [...items.map(x=>x.el),hint,navRow(btn)];
+ }},
+ {id:"steps",stage:1,render(){
+   const s=story(),btn=nextBtn("然後呢？",{hidden:true});
+   const items=s.steps.map((x,k)=>({el:step3(String(k+1),x[0],x[1]),hold:2600}));
+   const hint=reveal(items,{onDone:()=>btn.hidden=false});
+   return [H(s.name+"的三步"),...items.map(x=>x.el),hint,navRow(btn)];
+ }},
+ {id:"choice",stage:1,render(){
+   const s=story();
+   return [H("站穩之後，"+s.name+"可以……"),P("沒有錯的選項，選一個你想看的。","muted"),opts(S,"storyChoice",Object.keys(s.choices),{auto:true}),navRow(null)];
+ }},
+ {id:"result",stage:1,render(){
+   const s=story(),btn=nextBtn("換你",{hidden:true});
+   const items=[{el:el("p",{class:"note big",text:s.choices[S.storyChoice]||Object.values(s.choices)[0]}),hold:2400},
+     {el:P("風暴沒有消失。"+s.name+"只是從樹上下來了。","big")}];
+   const hint=reveal(items,{onDone:()=>btn.hidden=false});
+   return [H("後來"),...items.map(x=>x.el),hint,navRow(btn)];
+ }},
+ /* ---- 2 自己做 ---- */
+ {id:"notice",stage:2,render(){
+   const q=quote();
+   const paint=()=>{const parts=S.notice.map(v=>NOTICE[v]);q.textContent="我注意到，我"+(parts.length?"有"+parts.join("、"):"現在有一些感覺")+"。"};
+   const ch=chips(Object.keys(NOTICE),{get:()=>S.notice,set:v=>{const i=S.notice.indexOf(v);i<0?S.notice.push(v):S.notice.splice(i,1);paint()}});
+   paint();
+   return [H("第 1 步：此刻你注意到什麼？"),P("可以選很多個。","muted"),ch,q,P("在心裡慢慢說一次。","muted"),navRow(nextBtn("說好了"))];
+ }},
+ {id:"body",stage:2,render(){
+   return [H("第 2 步：放慢。選一個你現在方便做的"),opts(S,"bodyAct",Object.keys(BODY),{auto:true,labels:BODY}),navRow(null)];
+ }},
+ {id:"slow",stage:2,render(){
+   const box=el("div",{class:"stack"}),btn=nextBtn("下一步",{hidden:true});
+   later(()=>breathe(box,2,()=>{box.textContent="";box.append(P("好。身體踩穩了。","big"));btn.hidden=false;btn.focus()},(BODY_DO[S.bodyAct]||"一邊雙腳慢慢踩進地板")+"，一邊跟著圓圈吐氣。"),200);
+   return [H("放慢，連結身體"),box,navRow(btn)];
+ }},
+ {id:"see",stage:2,render(){
+   const box=el("div",{class:"stack"}),btn=nextBtn("下一步",{hidden:true});
+   later(()=>taps(box,"找 5 樣你看得到的東西。",5,()=>{box.textContent="";box.append(P("很好。","big"));btn.hidden=false;btn.focus()},"慢慢看，帶一點好奇。找到一個，就點一下。"),200);
+   return [H("第 3 步：看看周圍"),box,navRow(btn)];
+ }},
+ {id:"hear",stage:2,render(){
+   const box=el("div",{class:"stack"}),btn=nextBtn("下一步",{hidden:true});
+   later(()=>taps(box,"聽聽看，找 3 個聲音。",3,()=>{box.textContent="";
+     box.append(el("p",{class:"big",text:"摸一下桌面或膝蓋。是什麼感覺？"}),opts(S,"touch",["滑滑的","粗粗的","涼涼的","溫溫的","說不上來"],{after:()=>btn.hidden=false}))}),200);
+   return [H("聽和摸"),box,navRow(btn)];
+ }},
+ {id:"where",stage:2,render(){
+   const q=quote();
+   const paint=()=>{q.textContent="我現在在"+(S.place||"＿＿")+"，正"+(S.doing||"＿＿")+"。"};
+   const c1=chips(["宿舍","家裡","教室","圖書館","路上","別的地方"],{get:()=>[S.place],set:v=>{S.place=v;paint()}});
+   const c2=chips(["坐著","躺著","站著","在等","在走路"],{get:()=>[S.doing],set:v=>{S.doing=v;paint()}});
+   paint();
+   return [H("你在哪裡、正在做什麼？"),P("在哪裡","small muted"),c1,P("正在","small muted"),c2,q,navRow(nextBtn("下一步"))];
+ }},
+ {id:"after-att",stage:2,render(){
+   const btn=nextBtn("下一步",{hidden:true});
+   return [H("再看一次：注意力在哪裡？"),P("上面的小字是你前兩次選的位置。","muted small"),
+     attBar("att2",{marks:{att0:"一開始",att1:"試一下後"},after:()=>btn.hidden=false}),navRow(btn)];
+ }},
+ {id:"after-storm",stage:2,render(){
+   const msg=el("p",{class:"note"},"風暴沒變小也沒關係。這個練習不是要讓情緒消失，是讓你站穩。");msg.hidden=true;
+   const btn=nextBtn("下一步",{hidden:true});
+   const show=()=>{if(S.storm2!=null&&S.steady){msg.hidden=false;btn.hidden=false;skill.tried=true;saveSkill()}};
+   return [H("風暴現在有多大？"),scale("storm2",{auto:false,after:show}),
+     el("p",{class:"big",style:"margin-top:6px",text:"跟一開始比，你站得："}),opts(S,"steady",["更不穩","差不多","穩一點","穩很多"],{after:show}),msg,navRow(btn)];
+ }},
+ {id:"next-step",stage:2,render(){
+   const box=el("div",{class:"stack"});
+   const cont=nextBtn("繼續（還有 2 步，約 2 分鐘）",{hidden:true});
+   const R={
+    "做一件小事":()=>[P("選一件 5 分鐘內做得完的。喝水、回一則訊息、寫一行，都算。","note")],
+    "先休息一下":()=>[P("休息是一個有效的下一步，不是偷懶。","note")],
+    "再做一次三步":()=>[P("隨時都可以再做一次。","note"),el("button",{class:"btn ghost",type:"button",on:{click:()=>goSpecial("again")}},"現在再做一次（30 秒）")],
+    "是某一句話一直拉著我":()=>[P("那可以試試另一個練習「脫鉤」：和那句話拉開一點距離。","note"),el("a",{class:"linkbtn",href:UNHOOK_URL},"打開脫鉤練習")],
+    "想找人說說":()=>[el("div",{class:"helpbox"},...helpContent())],
+    "就到這裡":()=>[P("好。你已經做完最重要的部分了。","note")]};
+   const g=opts(S,"nextStep",Object.keys(R),{after:v=>{box.textContent="";box.append(...R[v]());cont.hidden=false;
+     cont.textContent=v==="就到這裡"?"還是想看完（約 2 分鐘）":"繼續（還有 2 步，約 2 分鐘）"}});
+   const stop=el("button",{class:"linkbtn",type:"button",on:{click:()=>{S.exitedAt="next-step";startFlow("fb")}}},"結束，給個回饋");
+   return [H("站穩之後，你想……"),g,box,navRow(cont,{exit:false,extra:stop})];
+ }},
+ /* ---- 3 給朋友一句話 ---- */
+ {id:"friend",stage:3,render(){
+   const ta=textIn("advice",S,"advice","選一個句型，或自己寫。",{area:true,max:120});
+   const ch=chips(["不用讓它停，先＿＿就好。","先＿＿，再＿＿。","我自己是用＿＿。"],{get:()=>[],set:v=>{S.advice=v;ta.value=v;ta.focus();const k=v.indexOf("＿＿");if(k>=0)ta.setSelectionRange(k,k+2)}});
+   const share=el("input",{type:"checkbox",id:"shareAdvice"});share.checked=S.shareAdvice;share.addEventListener("change",()=>S.shareAdvice=share.checked);
+   const skip=el("button",{class:"linkbtn",type:"button",on:{click:()=>{S.skippedFriend=true;next()}}},"跳過這一步");
+   return [H("學弟妹跟你說「我現在腦袋好亂」"),P("你會怎麼用一句話，教他剛剛這個方法？","big"),ch,ta,
+     el("label",{class:"row small",for:"shareAdvice"},share,"願意放進回饋卡給我們參考"),
+     navRow(nextBtn("下一步"),{exit:false,extra:skip})];
+ }},
+ /* ---- 4 帶回生活 ---- */
+ {id:"if",stage:4,render(){
+   const custom=textIn("ifCustom",S,"ifCustom","或自己寫一個時刻",{max:40});
+   const ok=()=>!!(S.ifWhen&&(S.ifWhen!=="自己寫"||S.ifCustom.trim()));
+   const ch=chips(["睡前腦袋停不下來","打開電腦不知道從哪開始","上台或面試之前","滑手機停不下來的時候"],{get:()=>[S.ifWhen],set:v=>{S.ifWhen=v;S.ifCustom="";custom.value=""}});
+   custom.addEventListener("input",()=>{S.ifWhen=custom.value.trim()?"自己寫":"";ch._sync();refreshNext()});
+   return [H("下次什麼時候，你可能會用到？"),ch,custom,navRow(nextBtn("下一步",{needs:ok}))];
+ }},
+ {id:"forget",stage:4,render(){
+   const tip=el("p",{class:"note"});tip.hidden=true;
+   const btn=nextBtn("做成我的接地卡",{needs:()=>!!S.forget});
+   return [H("那時候，你就："),quote(THEN),el("p",{class:"big",style:"margin-top:4px",text:"什麼可能會讓你忘記？"}),
+     opts(S,"forget",Object.keys(FORGET),{after:v=>{tip.textContent="可以這樣：" +FORGET[v];tip.hidden=false}}),tip,navRow(btn)];
+ }},
+ {id:"card",stage:4,render(){
+   const when=S.ifWhen==="自己寫"?S.ifCustom.trim():S.ifWhen;
+   const btn=nextBtn("給回饋（1 分鐘）",{hidden:true,to:()=>startFlow("fb")});
+   const items=[
+     {el:el("div",{class:"gcard"},el("div",{class:"k",text:"如果"}),el("div",{class:"v",text:when}),el("div",{class:"k",text:"我就"}),el("div",{class:"v",text:THEN}),
+       el("div",{class:"k",text:"提醒自己"}),el("div",{class:"v",text:FORGET_SHORT[S.forget]||"設成鎖定畫面"}),
+       el("div",{class:"k",text:"今天的小練習"}),el("div",{class:"v",style:"margin-bottom:0",text:"喝水的時候，用第一次喝的心情喝一口：溫度、味道、喝下去的感覺。"})),hold:2400},
+     {el:P("截圖存起來。平時多練幾次，風暴來的時候比較想得起來。3 天後，邀請你的人會問你：有想起來嗎？","small")},
+     {el:skillTree()}];
+   const hint=reveal(items,{onDone:()=>btn.hidden=false});
+   return [H("你的接地卡"),...items.map(x=>x.el),hint,navRow(btn,{exit:false})];
+ }}
+];
+
+const QUICK=[
+ {id:"q-notice",stage:0,render(){
+   const btn=nextBtn("說好了",{hidden:true});
+   const items=[{el:P("你現在很亂。先不用解決任何事。","big")},{el:P("在心裡說一次：","big")},{el:quote("我注意到，我現在很亂。"),hold:1800}];
+   const hint=reveal(items,{gap:1300,onDone:()=>btn.hidden=false});
+   return [...items.map(x=>x.el),hint,navRow(btn)];
+ }},
+ {id:"q-slow",stage:1,render(){
+   const box=el("div",{class:"stack"}),btn=nextBtn("下一步",{hidden:true});
+   later(()=>breathe(box,1,()=>feet(box,"雙腳慢慢踩一下地板，感覺地板在你腳下。",()=>{box.textContent="";box.append(P("好。","big"));btn.hidden=false;btn.focus()})),200);
+   return [H("放慢"),box,navRow(btn)];
+ }},
+ {id:"q-see",stage:2,render(){
+   const box=el("div",{class:"stack"}),btn=nextBtn("下一步",{hidden:true});
+   later(()=>taps(box,"找出 3 樣你看得到的東西。",3,()=>taps(box,"再聽一個聲音。",1,()=>{box.textContent="";box.append(P("回來了。","big"));btn.hidden=false;btn.focus()})),200);
+   return [H("看看周圍"),box,navRow(btn)];
+ }},
+ {id:"q-end",stage:2,render(){
+   S.quickDone=true;skill.learned=true;skill.tried=true;saveSkill();
+   const box=el("div",{class:"stack"});
+   const R={"穩一點了":"這樣就夠了。風暴可能還在，沒關係。","差不多":"很正常。可以再做一次，或先休息。","更亂了":"有時候一停下來，才發現有多亂。不用硬撐。"};
+   const g=opts(S,"quickFeel",Object.keys(R),{after:v=>{box.textContent="";box.append(P(R[v],"note"));
+     if(v==="更亂了")box.append(el("div",{class:"helpbox"},...helpContent()));
+     box.append(el("div",{class:"stack"},
+       el("button",{class:"btn ghost",type:"button",on:{click:()=>{hist=[];pos={flow:"quick",i:1};render()}}},"再做一次"),
+       el("a",{class:"linkbtn",href:UNHOOK_URL},"是某一句話一直拉著我 → 脫鉤練習")))}});
+   return [H("現在，站得穩一點了嗎？"),g,box,
+     el("div",{class:"nav"},el("button",{class:"linkbtn",type:"button",on:{click:()=>startFlow("fb")}},"給個回饋"),el("button",{class:"btn",type:"button",on:{click:goHome}},"回入口"))];
+ }}
+];
+
+const FB=[
+ {id:"fb-stuck",stage:0,render(){return [H("哪一頁最卡，或最想跳過？"),opts(S.fb,"stuck",PAGES.concat(["都還好"]),{auto:true}),navRow(null,{exit:false})]}},
+ {id:"fb-help",stage:0,render(){return [H("哪一頁最有幫助？"),opts(S.fb,"help",PAGES.concat(["都沒有特別"]),{auto:true}),navRow(null,{exit:false})]}},
+ {id:"fb-story",stage:0,render(){return [H("故事裡的人，跟你像不像？"),opts(S.fb,"story",["很像","有一點","不像","沒看到故事"],{auto:true}),navRow(null,{exit:false})]}},
+ {id:"fb-what",stage:0,render(){return [H("做完後，你覺得這個練習是在練什麼？"),opts(S.fb,"what",["讓自己冷靜下來","先站穩，再決定下一步","轉移注意力","不確定"],{auto:true}),navRow(null,{exit:false})]}},
+ {id:"fb-unclear",stage:0,render(){return [H("有沒有哪裡看不懂，或要用猜的？"),textIn("unclear",S.fb,"unclear","可不填",{area:true,max:300}),navRow(nextBtn("下一步"),{exit:false})]}},
+ {id:"fb-pace",stage:0,render(){return [H("文字一句一句出來的速度？"),opts(S.fb,"pace",["太慢，想快點","剛好","太快，來不及讀"],{auto:true}),navRow(null,{exit:false})]}},
+ {id:"fb-length",stage:0,render(){return [H("整體長度？"),opts(S.fb,"length",["太長","剛好","太短"],{auto:true}),navRow(null,{exit:false})]}},
+ {id:"fb-will",stage:0,render(){return [H("接下來 3 天，會想起來用嗎？"),opts(S.fb,"willUse",["會","可能","不會"],{auto:true}),navRow(null,{exit:false})]}},
+ {id:"fb-last",stage:0,render(){
+   const code=textIn("code",S,"code","例如綽號，讓邀請你的人認得你",{max:20});
+   code.addEventListener("input",()=>store.set("code",S.code));
+   return [H("最後"),el("label",{class:"small",for:"other"},"還有想說的嗎？"),textIn("other",S.fb,"other","可不填",{area:true,max:300}),
+     el("label",{class:"small",for:"code"},"你的代號"),code,navRow(nextBtn("產生回饋卡"),{exit:false})];
+ }},
+ {id:"fb-card",stage:0,render(){return summaryView("【回到當下練習｜測試回饋】",buildSummary())}}
+];
+
+const FU=[
+ {id:"fu-code",stage:0,render(){return [H("嗨，3 天過去了"),P("沒想起來、沒用，也都是很有用的答案。","muted"),el("label",{class:"small",for:"fuCode"},"你的代號"),(()=>{const c=textIn("fuCode",S,"code","你上次填的代號",{max:20});c.addEventListener("input",()=>store.set("code",S.code));return c})(),navRow(nextBtn("開始"),{exit:false})]}},
+ {id:"fu-remember",stage:0,render(){return [H("這幾天，有想起「腳踩地、吐氣、看周圍」嗎？"),opts(S.fu,"remember",["有，而且用了","有想起來，但沒用","沒有想起來"],{auto:true,after:v=>{if(v==="有，而且用了"){skill.used=true;saveSkill()}}}),navRow(null,{exit:false})]}},
+ {id:"fu-when",stage:0,skip:()=>S.fu.remember!=="有，而且用了",render(){return [H("是什麼時候用的？"),textIn("fuWhen",S.fu,"when","例如：星期二睡前",{area:true,max:300}),navRow(nextBtn("下一步"),{exit:false})]}},
+ {id:"fu-helped",stage:0,skip:()=>S.fu.remember!=="有，而且用了",render(){return [H("用了之後？"),opts(S.fu,"helped",["站得穩一點","普通","沒幫助"],{auto:true}),navRow(null,{exit:false})]}},
+ {id:"fu-why",stage:0,skip:()=>S.fu.remember==="有，而且用了",render(){return [H("最主要的原因是？"),opts(S.fu,"why",["忘了","這幾天沒遇到","想起來但不想用","在別人面前不好做","試了覺得沒效","其他"],{auto:true}),navRow(null,{exit:false})]}},
+ {id:"fu-drink",stage:0,render(){return [H("「喝水時用第一次喝的心情喝一口」，有試過嗎？"),opts(S.fu,"drink",["有","沒有","忘了有這個"],{auto:true}),navRow(null,{exit:false})]}},
+ {id:"fu-other",stage:0,render(){return [H("還有想說的嗎？"),textIn("fuOther",S.fu,"other","可不填",{area:true,max:300}),navRow(nextBtn("產生回顧卡"),{exit:false})]}},
+ {id:"fu-card",stage:0,render(){return summaryView("【回到當下練習｜3 天後回顧】",buildFollowup())}}
+];
+const FLOWS={full:FULL,quick:QUICK,fb:FB,fu:FU};
+
+/* ---------------- special screens ---------------- */
+const SPECIAL={
+ home(){
+   const entries=[];
+   if(resume)entries.push(el("button",{class:"entry primary",type:"button",on:{click:()=>{const r=resume;resume=null;pos={...r};hist=[];render()}}},
+     el("b",{text:"繼續剛剛的練習"}),el("span",{class:"t",text:STAGES[resume.flow][FLOWS[resume.flow][resume.i].stage]}),el("span",{class:"d",text:FLOWNAME[resume.flow]+"，從你離開的地方接著做"})));
+   entries.push(
+     el("button",{class:"entry"+(resume?"":" primary"),type:"button",on:{click:()=>startFlow("full")}},el("b",{text:"完整練習"}),el("span",{class:"t",text:"8 分鐘"}),el("span",{class:"d",text:"第一次來，從這裡開始"})),
+     el("button",{class:"entry",type:"button",on:{click:()=>startFlow("quick")}},el("b",{text:"快速版"}),el("span",{class:"t",text:"1 分鐘"}),el("span",{class:"d",text:"現在很亂，先站穩"})),
+     el("button",{class:"entry",type:"button",on:{click:()=>startFlow("fu")}},el("b",{text:"3 天後回顧"}),el("span",{class:"t",text:"1 分鐘"}),el("span",{class:"d",text:"做過練習，回來說說"})));
+   const art=treeArt();later(()=>art.classList.add("down"),1400);
+   return [
+     el("div",{class:"stack",style:"gap:6px"},el("h1",{text:"回到當下"}),P("很亂的時候，先從樹上下來。","big")),
+     art,
+     el("div",{class:"stack"},...entries),
+     skillTree(),
+     el("details",{},el("summary",{},"關於這次測試"),
+       P("這是測試版，想知道它好不好用，不是在評分你。"),
+       P("你選的、打的字只留在這個頁面。最後的回饋卡要不要傳，由你決定。"),
+       P("練習整理自 WHO《Doing What Matters in Times of Stress》第一部分 Grounding。"),
+       el("p",{},"另一個練習：",el("a",{href:UNHOOK_URL},"脫鉤")))
+   ];
+ },
+ smaller(){
+   const back=hist.length?hist[hist.length-1]:null;
+   return [H("現在做不到，很正常"),P("兩種都算完成這次練習。","muted"),
+     el("div",{class:"stack"},
+       el("button",{class:"btn",type:"button",on:{click:()=>{S.usedSmaller=true;goSpecial("mini")}}},"只做 8 秒：腳踩地"),
+       el("button",{class:"btn ghost",type:"button",on:{click:()=>startFlow("fb")}},"先結束，給個回饋"),
+       el("button",{class:"btn ghost",type:"button",on:{click:goHome}},"回入口"),
+       back?el("button",{class:"linkbtn",type:"button",on:{click:()=>{S.exitedAt="";goBack()}}},"我想回剛剛那一步"):null)];
+ },
+ mini(){
+   const box=el("div",{class:"stack"}),end=el("div",{class:"nav"},el("button",{class:"linkbtn",type:"button",on:{click:goHome}},"回入口"),el("button",{class:"btn",type:"button",on:{click:()=>startFlow("fb")}},"給個回饋"));
+   end.hidden=true;
+   later(()=>feet(box,"只做一件事：雙腳踩地，感覺地板。",()=>{box.textContent="";box.append(P("這樣就夠了。","big"));end.hidden=false}),200);
+   return [box,end];
+ },
+ again(){
+   const box=el("div",{class:"stack"}),btn=el("button",{class:"btn",type:"button",hidden:true,on:{click:goBack}},"回到剛剛");
+   later(()=>guided30(box,()=>{box.textContent="";box.append(P("又站穩一次了。","big"));btn.hidden=false;btn.focus()}),200);
+   return [H("再做一次"),box,el("div",{class:"nav"},el("span"),btn)];
+ }
+};
+
+/* ---------------- summary ---------------- */
+const fmt=ms=>{const s=Math.round(ms/1000);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")};
+const att=v=>v?ATT[v-1]+"("+v+")":"—";
+function buildSummary(){
+  closeTiming();
+  const f=S.fb,L=[],when=S.ifWhen==="自己寫"?(S.ifCustom.trim()?"自己寫："+S.ifCustom.trim():""):S.ifWhen;
+  const route=S.quickDone&&!T.stage["full:0"]?"快速版":"完整練習";
+  L.push("代號："+(S.code.trim()||"（未填）"),"走的路線："+route);
+  L.push("完成情形："+(S.exitedAt?("在「"+stageOf(S.exitedAt)+"」提早結束"+(S.usedSmaller?"，做了 8 秒小版本":"")):"走完全程"));
+  if(T.start)L.push("總時間："+fmt(Date.now()-T.start));
+  const fl=route==="快速版"?"quick":"full";
+  L.push("各步時間："+STAGES[fl].map((s,i)=>s+" "+(T.stage[fl+":"+i]?fmt(T.stage[fl+":"+i]):"—")).join("｜"),"","〔操作紀錄〕");
+  if(route==="完整練習"){
+    L.push("哪一種亂："+(TYPES[S.type]||"—"));
+    L.push("注意力（1 腦袋裡–5 眼前）：一開始 "+att(S.att0)+" → 試一下後 "+att(S.att1)+" → 完整三步後 "+att(S.att2));
+    L.push("風暴（0–10）：一開始 "+(S.storm0??"—")+" → 之後 "+(S.storm2??"—"));
+    L.push("跟一開始比站得："+(S.steady||"—"));
+    L.push("示範中選的做法："+(S.storyChoice||"—"));
+    L.push("注意到："+(S.notice.length?S.notice.join("、"):"—")+"；身體動作："+(S.bodyAct||"—"));
+    L.push("站穩後想："+(S.nextStep||"—"));
+    L.push("給朋友一句話："+(S.skippedFriend?"跳過":S.advice.trim()?(S.shareAdvice?"「"+S.advice.trim()+"」":"有寫，選擇不分享"):"沒寫"));
+    L.push("如果的時刻："+(when||"—")+"；可能忘記的原因："+(S.forget||"—"));
+  }else L.push("做完後："+(S.quickFeel||"—"));
+  L.push("","〔回饋〕");
+  L.push("最卡的一頁："+(f.stuck||"—"),"最有幫助的一頁："+(f.help||"—"),"故事像不像自己："+(f.story||"—"),"覺得在練什麼："+(f.what||"—"),
+    "看不懂或要猜："+((f.unclear||"").trim()||"—"),"逐句速度："+(f.pace||"—"),"長度："+(f.length||"—"),"3 天內會想起來用："+(f.willUse||"—"),"其他："+((f.other||"").trim()||"—"));
+  return L.join("\n");
+}
+function buildFollowup(){const u=S.fu;return ["代號："+(S.code.trim()||"（未填）"),"有想起來嗎："+(u.remember||"—"),"使用的時候："+((u.when||"").trim()||"—"),"用了之後："+(u.helped||"—"),"沒用的主因："+(u.why||"—"),"喝水練習："+(u.drink||"—"),"其他："+((u.other||"").trim()||"—")].join("\n")}
+function summaryView(head,body){
+  const text=head+"\n"+body,pre=el("pre",{class:"out",text}),msg=el("p",{class:"small muted"});
+  const sel=()=>{const r=document.createRange();r.selectNodeContents(pre);const s=getSelection();s.removeAllRanges();s.addRange(r)};
+  const copy=el("button",{class:"btn",type:"button",on:{click:()=>{
+    try{navigator.clipboard.writeText(text).then(()=>msg.textContent="已複製。貼到 LINE 傳給邀請你的人就完成了。",()=>{sel();msg.textContent="已選取文字，請長按複製。"})}catch(e){sel();msg.textContent="已選取文字，請長按複製。"}}}},"複製回饋卡");
+  return [H("謝謝你！把這張卡傳給邀請你的人"),P("卡片只有你選的選項和時間；給朋友的那句話，只有你勾選願意時才會放進來。","muted small"),pre,el("div",{class:"row"},copy,el("button",{class:"btn ghost",type:"button",on:{click:goHome}},"回入口")),msg];
+}
+function stageOf(id){for(const f of ["full","quick"]){const s=FLOWS[f].find(x=>x.id===id);if(s)return STAGES[f][s.stage]}return id}
+
+/* ---------------- navigation, timing, progress ---------------- */
+const curScreen=()=>pos.flow==="special"?{id:pos.id}:pos.flow==="home"?{id:"home"}:FLOWS[pos.flow][pos.i];
+function timingKey(){return (pos.flow==="full"||pos.flow==="quick")?pos.flow+":"+FLOWS[pos.flow][pos.i].stage:null}
+function closeTiming(){if(T.curKey)T.stage[T.curKey]=(T.stage[T.curKey]||0)+(Date.now()-T.curStart);T.curStart=Date.now()}
+function startFlow(f){hist=[];if(f==="full"||f==="quick"){resume=null;if(!T.start)T.start=Date.now()}pos={flow:f,i:0};render()}
+function next(){const F=FLOWS[pos.flow];let i=pos.i+1;while(i<F.length&&F[i].skip&&F[i].skip())i++;if(i>=F.length)return goHome();hist.push({...pos});pos={flow:pos.flow,i};render()}
+function goBack(){if(!hist.length)return;pos=hist.pop();render()}
+function goSpecial(id){hist.push({...pos});pos={flow:"special",id,from:lastFlowPos()};render()}
+function lastFlowPos(){if(pos.flow==="special")return pos.from;return pos.flow==="home"?null:{...pos}}
+function goHome(){const p=lastFlowPos();if(p&&(p.flow==="full"||p.flow==="quick")&&!isEnd(p))resume=p;else if(p&&p.flow!=="fb"&&p.flow!=="fu")resume=null;hist=[];pos={flow:"home",i:0};render()}
+function isEnd(p){const F=FLOWS[p.flow];return p.i>=F.length-1}
+
+function renderTrack(){
+  const tp=pos.flow==="special"?pos.from:(pos.flow==="home"?null:pos);
+  const tr=$("#track");$("#homeBtn").hidden=pos.flow==="home";
+  $("#flowName").textContent=tp?FLOWNAME[tp.flow]:"";$("#brand").style.visibility=pos.flow==="home"?"hidden":"visible";
+  if(!tp){tr.hidden=true;return}
+  tr.hidden=false;
+  const F=FLOWS[tp.flow],names=STAGES[tp.flow],cur=F[tp.i].stage;
+  const inStage=F.filter(s=>s.stage===cur),sub=inStage.indexOf(F[tp.i])+1;
+  const segs=$("#segs"),labels=$("#labels");segs.textContent="";labels.textContent="";
+  names.forEach((n,k)=>{
+    const fill=k<cur?100:k>cur?0:Math.round(sub/inStage.length*100);
+    const i=el("i");segs.append(el("div",{class:"seg"},i));
+    requestAnimationFrame(()=>requestAnimationFrame(()=>i.style.width=fill+"%"));
+    const lab=el("span",{class:k===cur?"now":""},n);if(k===cur&&inStage.length>1)lab.append(el("b",{text:sub+"/"+inStage.length}));labels.append(lab);
+  });
+}
+function render(){
+  cleanups.forEach(f=>f());cleanups=[];
+  closeTiming();T.curKey=timingKey();
+  const m=$("#screen");m.textContent="";m.classList.remove("enter");void m.offsetWidth;m.classList.add("enter");
+  document.body.classList.toggle("home",pos.flow==="home");
+  renderTrack();
+  const nodes=pos.flow==="home"?SPECIAL.home():pos.flow==="special"?SPECIAL[pos.id]():FLOWS[pos.flow][pos.i].render();
+  nodes.forEach(n=>n&&m.append(n));
+  window.scrollTo(0,0);
+  const h=m.querySelector("h1,h2");if(h){h.setAttribute("tabindex","-1");h.focus({preventScroll:true})}
+}
+
+$("#helpBox").append(...helpContent());
+$("#homeBtn").addEventListener("click",goHome);
+$("#helpBtn").addEventListener("click",e=>{const b=$("#helpBox");b.hidden=!b.hidden;e.currentTarget.setAttribute("aria-expanded",String(!b.hidden))});
+function route(){if(location.hash==="#followup")startFlow("fu");else render()}
+window.addEventListener("hashchange",route);
+route();
+})();
+</script>
+</body>
+</html>
