@@ -777,7 +777,7 @@ SCR.beach=a=>{if(!S.done.includes('beach'))S.done.push('beach');
 /* ---- 離島 ---- */
 SCR.leave=a=>{
   if(a.bye) return say(['燈塔一直亮著，需要的時候抬頭就看得到。','慢慢來。'],[
-    B('想第一批試住？留下 email',()=>go('bulletin',{focus:'join'}),'primary'),B('重新上岸',()=>go('dock'),'ghost')]);
+    B('想第一批試住？留下聯絡方式',()=>go('bulletin',{focus:'join'}),'primary'),B('重新上岸',()=>go('dock'),'ghost')]);
   if(S.worse) return say(['今天就先到這裡吧，不用再多做什麼。','慢慢來。'],[B('離島',()=>go('leave',{bye:1}),'primary'),B('去燈塔找人',()=>go('lighthouse'))]);
   if(S.ifthen){
     if(a.edit) return say(['要改成什麼時候？'],['腦袋很吵的時候','開始讀書或工作時','滑到別人動態時','睡前','緊張的時候'].map(o=>B(o,()=>{S.ifthen.when=o;const lc=S.cards.find(c=>c.unit===S.ifthen.unit&&c.when);if(lc){lc.when=o;lc.it=`如果${o}，我就${S.ifthen.do}。`;}go('leave',{bye:1})},'chip')).concat([B('不改了，直接離島',()=>go('leave',{bye:1}),'ghost sm')]));
@@ -802,23 +802,22 @@ SCR.lighthouse=()=>`<div class="fpage">${fhead('lighthouse','燈塔','需要人�
  <div class="box"><h3>守燈人</h3><p>守燈人是真人，負責看過島上有危機訊號的內容。因為島民是匿名的，守燈人沒辦法聯絡到你，所以現在就需要人的話，請用上面的電話。</p></div>
  <p class="tiny">登大人島不是諮商或醫療服務。資料核對於 2026-11-10。</p></div>`;
 
-/* ---- 公佈欄（含留 email） ---- */
+/* ---- 公佈欄（留聯絡方式→回饋頁） ---- */
 SCR.bulletin=a=>{mount(()=>{if(a.focus==='join'){const e=$('#join');if(e)e.scrollIntoView({behavior:'smooth'})}});
  return `<div class="fpage">${fhead('board','公佈欄','島上的規矩和最新消息')}
  <div class="grid2"><div class="box"><h3>難過可以帶上島，惡意不行。</h3><ol><li>難過可以帶上島，不必先變好才能來。</li><li>用善意回應：不說教、不比誰比較慘、不評價別人的選擇。</li><li>分享自己的經驗，不替別人做決定。</li><li>不留個資（自己的、別人的），不推銷。</li></ol></div>
  <div class="box"><h3>島不取代諮商</h3><p>這座島可以陪你練習照顧自己，但它不是諮商、醫療、法律或稅務服務。內容還沒經過心理專業審閱。需要專業幫忙的時候，燈塔有可以聯絡的地方。</p><h3>最新消息</h3><p>11/21：島第一次對外開放參觀。</p></div></div>
  <div class="box"><h3>隱私說明</h3><table class="t"><tr><th>存什麼</th><th>不存什麼</th></tr><tr><td>你的貝殼袋：卡片、技能狀態、「如果—就」</td><td>練習裡打的那句話</td></tr><tr><td>你選擇丟出去的瓶子</td><td>「放下一件心事」的內容</td></tr><tr><td>你填的回饋卡</td><td>你的名字、學校、電話</td></tr><tr><td>匿名使用紀錄：去了哪個設施、做到第幾步</td><td>你打的任何內容</td></tr></table>
- <p class="tiny">如果你留了 email，它和上面的資料分開存、不會連在一起，只用來寄試用邀請，隨時可以退出。</p></div>
- <div class="box" id="join" style="border-color:var(--lamp);border-width:2px"><h3>想當第一批試住的島民？</h3><p>留下 email，有新版本時我們會寄邀請給你。</p>
-  ${a.sent?`<p class="big">記下了，謝謝你。</p><p class="tiny">（展演版：還沒接資料庫，11/14 接上。目前這台裝置記了 ${S.emails.length} 筆。）</p>${B('換下一位填',()=>go('bulletin',{focus:'join'}),'sm')}`:
-  `<p class="tiny">展演版：email 先記在這台裝置，還沒接資料庫（11/14 接上），不會馬上收到信。</p><input type="text" id="em" placeholder="you@example.com" style="max-width:380px"><div class="chips">${['想當測試者','想一起做','可以提供專業意見'].map(x=>`<label class="chk" style="margin-right:14px"><input type="checkbox" class="ro" value="${x}"> ${x}</label>`).join('')}</div>
-   <div class="row">${B('留下 email',()=>{const v=$('#em').value.trim();if(!/\S+@\S+\.\S+/.test(v)){toast('email 格式好像不太對');return}S.emails.push({email:v,roles:[...document.querySelectorAll('.ro:checked')].map(x=>x.value)});go('bulletin',{sent:1,focus:'join'})},'primary')}</div>`}</div></div>`;};
+ <p class="tiny">如果你留了聯絡方式，它和上面的資料分開存、不會連在一起，只用來聯絡你，隨時可以退出。</p></div>
+ <div class="box" id="join" style="border-color:var(--lamp);border-width:2px"><h3>想當第一批試住的島民？</h3><p>留下聯絡方式，有新版本時我們會寄邀請給你。也可以一起蓋島、給專業意見或介紹資源。</p>
+  <div class="row"><a class="btn primary" href="https://fis428.github.io/soul-lab-island/feedback/?from=web" target="_blank" rel="noopener" style="text-decoration:none">留下聯絡方式</a></div>
+  <p class="tiny">會在新分頁打開。也可以用手機感應小島模型，或掃旁邊的 QR 碼。</p></div></div>`;};
 
 /* ---- 生活街／茶屋／工地 ---- */
 SCR.street=()=>`<div class="fpage">${fhead('street','生活街','前輩怎麼自己生活。')}<div class="chips">${['租房','自己生活','交通','稅務與錢','工作與打工'].map(x=>`<span class="tag plan">${x}・工地</span>`).join('')}</div>
  <div class="box"><p>這裡還在蓋，之後會開放。</p><p class="tiny">之後會有：第一批 3 篇生活指南（例：第一次自己租房：看房前要問的事）。每篇都有「10 分鐘內的第一步」和官方連結。</p></div>
  <div class="row">${B('開放時想知道 → 公佈欄',()=>go('bulletin',{focus:'join'}))}${B('回地圖',()=>go('map'),'ghost')}</div></div>`;
-SCR.tea=()=>`<div class="fpage">${fhead('tea','前輩茶屋','前輩留下的經驗。')}<div class="box"><p>茶屋還在整修。想當第一批來說故事的前輩？在公佈欄留下 email。</p><p class="tiny">之後會有：前輩經驗投稿（那時候的我／卡在哪／我試過什麼／現在回頭看／給你的一句話），練習頁可以連過來：「前輩也遇過 →」。</p></div>
+SCR.tea=()=>`<div class="fpage">${fhead('tea','前輩茶屋','前輩留下的經驗。')}<div class="box"><p>茶屋還在整修。想當第一批來說故事的前輩？在公佈欄留下聯絡方式。</p><p class="tiny">之後會有：前輩經驗投稿（那時候的我／卡在哪／我試過什麼／現在回頭看／給你的一句話），練習頁可以連過來：「前輩也遇過 →」。</p></div>
  <div class="row">${B('去公佈欄',()=>go('bulletin',{focus:'join'}))}${B('回地圖',()=>go('map'),'ghost')}</div></div>`;
 SCR.site=()=>`<div class="fpage">${fhead('site','工地','整修中，之後會開放')}<div class="box"><p>這裡還在蓋，之後會開放。</p><p class="tiny">之後會有：善待自己、依價值行動、為情緒留空間三個練習；漂流瓶回應；島民共創內容。</p></div>
  <div class="row">${B('開放時想知道 → 公佈欄',()=>go('bulletin',{focus:'join'}))}${B('回地圖',()=>go('map'),'ghost')}</div></div>`;
@@ -835,8 +834,8 @@ const ST=[
   scr:[['打開貝殼袋',()=>goWalk('bag')]]},
  {n:5,nm:'留一句話',ic:'beach',fac:'漂流瓶海灘',st:'run',what:'撿一句島民留下的話，或丟一句給下一個人（經審核才漂出去）。練習裡的「給朋友一句話」也可以選擇流到這裡。',time:'1 分',
   scr:[['撿一個',()=>goWalk('beach',{mode:'pick'})],['丟一個',()=>goWalk('beach',{mode:'drop'})]]},
- {n:6,nm:'離島',ic:'dock',fac:'碼頭',st:'run',what:'留一句「如果—就」給下次的自己，阿潮送別；不說明天見、不跳通知。展場在這裡接「留 email」。',time:'20 秒',
-  scr:[['離島',()=>goWalk('leave')],['留 email（公佈欄）',()=>goWalk('bulletin',{focus:'join'})]]},
+ {n:6,nm:'離島',ic:'dock',fac:'碼頭',st:'run',what:'留一句「如果—就」給下次的自己，阿潮送別；不說明天見、不跳通知。展場在這裡接「留聯絡方式」（連到回饋頁）。',time:'20 秒',
+  scr:[['離島',()=>goWalk('leave')],['留聯絡方式（公佈欄）',()=>goWalk('bulletin',{focus:'join'})]]},
  {n:7,nm:'回來',ic:'back',fac:'碼頭情境 D／E／F・貝殼袋',st:'sim',what:'3 天後回來，阿潮問「這幾天有遇到嗎？」；練習做到一半的人可以接著做。展場用「展演控制」模擬。',time:'示範用',
   scr:[['模擬：3 天後回顧（情境 E）',()=>{S.reviewDue=true;if(!S.ifthen)S.ifthen={when:'腦袋很吵的時候',do:'雙腳踩地、找 3 樣看得到的東西',unit:'present'};goWalk('dock',{sit:'E'})}],['模擬：回來的人（情境 D）',()=>goWalk('dock',{sit:'D'})],['模擬：做到一半（情境 F）',()=>{if(!S.inprogress)S.inprogress={id:'defuse',step:6,seg:'自己做一次'};goWalk('dock',{sit:'F'})}]]},
  {n:8,nm:'成為前輩',ic:'senior',fac:'漂流瓶回應・前輩茶屋',st:'plan',what:'練過的人把經驗留給下一個人：回應瓶子（1 月）、到前輩茶屋投稿（工地）。島上的內容慢慢由島民一起長出來。',time:'之後',
@@ -858,7 +857,7 @@ function renderOverview(){
    </div>
    <div class="box" style="margin-top:18px"><h3>全島 10 個設施</h3><div class="facgrid">${Object.entries(FAC).map(([k,f])=>`<div class="fi" style="cursor:pointer" data-h="${h(()=>goWalk(f.to))}"><b>${f.n}</b>${f.line}<div style="margin-top:4px">${tag(f.st)}</div></div>`).join('')}</div>
     <p class="tiny" style="margin-top:10px">全島共用：每頁右上「需要人」連到燈塔；練習每頁都有「現在做不到」（只做 8 秒版／先到這裡／去燈塔）和「先到這裡」（停在哪裡會記著）。</p></div>
-   <div class="box"><h3>建議的攤位快速路線（約 3 分鐘）</h3><div class="route"><span class="s">碼頭：先喘口氣</span>→<span class="s">避風港：站穩一分鐘</span>→<span class="s">卡片收進貝殼袋</span>→<span class="s">海灘撿一個瓶子</span>→<span class="s">離島</span>→<span class="s">留 email</span></div>
+   <div class="box"><h3>建議的攤位快速路線（約 3 分鐘）</h3><div class="route"><span class="s">碼頭：先喘口氣</span>→<span class="s">避風港：站穩一分鐘</span>→<span class="s">卡片收進貝殼袋</span>→<span class="s">海灘撿一個瓶子</span>→<span class="s">離島</span>→<span class="s">留聯絡方式</span></div>
     <div class="row">${B('從碼頭開始走 →',()=>{goWalk('dock',{sit:'A'})},'primary')}</div></div>`;
 }
 
@@ -868,8 +867,8 @@ function renderDemo(){
   dp.innerHTML=`<b>碼頭情境</b><div class="chips">${['A','B','C','D','E','F'].map(x=>`<button class="btn ${S.forceSit===x?'primary':''}" data-h="${h(()=>{S.forceSit=S.forceSit===x?null:x;if(x==='E'||x==='D')S.returned=true;if(x==='E'){S.reviewDue=true;if(!S.ifthen)S.ifthen={when:'腦袋很吵的時候',do:'雙腳踩地、找 3 樣看得到的東西',unit:'present'}}if(x==='F'&&!S.inprogress)S.inprogress={id:'defuse',step:6,seg:'自己做一次'};go('dock',{sit:x})})}">${x}</button>`).join('')}</div>
    <div class="tiny">A 第一次・B 說不上來・C 深夜・D 回來的人・E 3 天後回顧・F 做到一半</div>
    <div class="row" style="margin-top:4px">${B('模擬過幾天回來',()=>{S.returned=true;S.reviewDue=true;S.greetOff=false;S.forceSit=null;$('#demo').open=false;go('map')})}</div>
-   <div class="row" style="margin-top:4px">${B('重新開始（下一位來賓）',()=>{const em=S.emails;S=fresh();S.emails=em;U=null;$('#demo').open=false;go('map')},'primary')}</div>
-   <div class="tiny">已收 email：${S.emails.length} 筆（展演版只存在這個分頁）</div>`;
+   <div class="row" style="margin-top:4px">${B('重新開始（下一位來賓）',()=>{S=fresh();U=null;$('#demo').open=false;go('map')},'primary')}</div>
+   <div class="tiny">聯絡資料都在回饋頁後台（Supabase），這裡不存。</div>`;
 }
 
 /* ============ 切換檢視 ============ */
